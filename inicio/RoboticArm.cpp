@@ -1,24 +1,26 @@
 #include "RoboticArm.h"
 #include "Braccio.h"
 
+// Constructor plus simple assignation
 RoboticArm::RoboticArm(int step_delay): step_delay(step_delay)
 {
 }
+
 
 void RoboticArm::Start()
 {
   braccio.begin();
 }
 
-void RoboticArm::SetHand(HandState state)
+void RoboticArm::SetGripper(GripperState state)
 {
-  if(state != HAND_NULL)
+  if(state != GRIPPER_NULL)
   {
-    if(state == HAND_OPEN)
+    if(state == GRIPPER_OPEN)
     {
       m6 = 10;
     }
-    else if(state == HAND_CLOSE)
+    else if(state == GRIPPER_CLOSE)
     {
        m6 = 73;
     }

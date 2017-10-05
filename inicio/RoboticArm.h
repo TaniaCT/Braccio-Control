@@ -4,36 +4,40 @@
 #include "Braccio.h"
 #include <Servo.h>
 
-enum HandState
+// Gripper possible states
+enum GripperState
 {
-  HAND_NULL,
-  HAND_OPEN,
-  HAND_CLOSE
+  GRIPPER_NULL,										/// Se pone por seguridad
+  GRIPPER_OPEN,
+  GRIPPER_CLOSE
 };
 
 class RoboticArm
 {
 public:
-  RoboticArm(int step_delay);
+	// Constructor. Need to set a delay in ms. Between 10 and 30.
+	RoboticArm(int step_delay);
 
-  void Start();
-  
-  void Move();
-  
-  void SetHand(HandState state);
+	// Initialize Braccio to default position
+	void Start();
+
+	// Perform Braccio simple movements
+	void Move();
+
+	// Sets the state of the gripper: GRIPPER_OPEN, GRIPPER_CLOSE
+	void SetGripper(GripperState state);
 
 private:
-  bool started = false;
 
-  _Braccio braccio;
+	_Braccio braccio;
 
-  int step_delay;
-  int m1 = 0;
-  int m2 = 45;
-  int m3 = 180;
-  int m4 = 180;
-  int m5 = 90;
-  int m6 = 10;  
+	int step_delay;
+	int m1 = 0;
+	int m2 = 45;
+	int m3 = 180;
+	int m4 = 180;
+	int m5 = 90;
+	int m6 = 10;  
   
 };
 #endif
