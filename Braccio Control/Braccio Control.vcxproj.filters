@@ -15,7 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Braccio_Control.ino" />
+    <ClCompile Include="Braccio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RoboticArm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
- 
+  <ItemGroup>
+    <ClInclude Include="Braccio.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RoboticArm.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Servo.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inicio.ino">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

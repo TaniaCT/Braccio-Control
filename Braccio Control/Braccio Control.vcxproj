@@ -73,14 +73,21 @@
   <ItemGroup>
     <ProjectCapability Include="VisualMicro" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Braccio.cpp" />
+    <ClCompile Include="RoboticArm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Braccio.h" />
+    <ClInclude Include="RoboticArm.h" />
+    <ClInclude Include="Servo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inicio.ino" />
+  </ItemGroup>
   <PropertyGroup>
     <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="Braccio_Control.ino">
-      <FileType>CppCode</FileType>
-    </None>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
