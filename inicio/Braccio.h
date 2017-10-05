@@ -20,7 +20,8 @@
 #ifndef BRACCIO_H_
 #define BRACCIO_H_
 
-#include "Servo.h"
+#include <Arduino.h>
+#include <Servo.h>
 
 // You should set begin(SOFT_START_DISABLED) if you are using the Arm Robot shield V1.6
 #define SOFT_START_DISABLED		-999
