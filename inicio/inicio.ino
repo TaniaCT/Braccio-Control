@@ -1,24 +1,15 @@
-#include "Braccio.h"
+#include "BraccioControl.h"
 #include "RoboticArm.h"
 
-Servo base;
-Servo shoulder;
-Servo elbow;
-Servo wrist_rot;
-Servo wrist_ver;
-Servo gripper;
-
-RoboticArm arm(20);
+BraccioControl braccio;
 
 void setup() {
-  arm.Start();
+  Serial.begin(9600);
+	braccio.Start();
+  Serial.print("He acabado. \n");
 }
 
 void loop() {
-  delay(2000);
-  arm.SetGripper(GRIPPER_CLOSE);
-  arm.Move();
-  delay(2000);
-  arm.SetGripper(GRIPPER_OPEN);
-  arm.Move();
+	braccio.Update();
+  Serial.print("Sigo. \n");
 }
