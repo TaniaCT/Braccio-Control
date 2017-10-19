@@ -3,7 +3,7 @@
 
 BraccioControl::BraccioControl() 
 {
-	modules[0] = &robot;
+	modules[0] = &BTMod;
 }
 
 void BraccioControl::Start() 

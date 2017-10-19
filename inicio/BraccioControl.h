@@ -3,6 +3,7 @@
 
 #include "Modules.h"
 #include "Robot.h"
+#include "BluetoothModule.h"
 
 #define MODULES 1
 
@@ -23,6 +24,7 @@ public:
 
 public:
 	Robot robot;
+  BluetoothModule BTMod;
 	Module* modules[MODULES];
 };
 

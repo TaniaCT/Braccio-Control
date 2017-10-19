@@ -10,7 +10,7 @@ void Robot::Start()
   ///Serial.print("He entrado al Robot. \n");
 	///arm.Start();
 
-  arm.SetGripper(GRIPPER_CLOSE);
+  arm.SetGripper(RoboticArm::GripperState::GRIPPER_CLOSE);
   ///Serial.print("He salido del Robot. \n");
 }
 

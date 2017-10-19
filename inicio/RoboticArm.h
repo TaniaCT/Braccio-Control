@@ -3,25 +3,25 @@
 
 #include <Servo.h>
 
-// Gripper possible states
-enum GripperState
-{
-  GRIPPER_NULL,										/// Se pone por seguridad
-  GRIPPER_OPEN,
-  GRIPPER_CLOSE
-};
-
-enum Servos
-{
-	S_BASE,
-	S_SHOULDER,
-	S_ELBOW,
-	S_WRIST_VER,
-	S_WRIST_ROT
-};
-
 class RoboticArm
 {
+public:
+	// Gripper possible states
+	enum GripperState
+	{
+		GRIPPER_NULL,										/// Se pone por seguridad
+		GRIPPER_OPEN,
+		GRIPPER_CLOSE
+	};
+
+	enum Servos
+	{
+		S_BASE,
+		S_SHOULDER,
+		S_ELBOW,
+		S_WRIST_VER,
+		S_WRIST_ROT
+	};
 public:
 	// Constructor. Needs to set a delay in ms between 10 and 30.
 	RoboticArm(int step_delay = 20);
