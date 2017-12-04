@@ -1,9 +1,21 @@
 #include "BluetoothModule.h"
+#include "BraccioControl.h"
+#include "EventManager.h"
 
 SoftwareSerial BT(4, 2); // RX TX
 
 BluetoothModule::BluetoothModule()
 {
+	jogging = new Command("JOG", 2, 2, true, E_ROBOT);
+	commands[0] = jogging;
+	disconnect = new Command("DISCON", 0, 0, true, E_CONNECTIVITY);
+	commands[1] = disconnect;
+	move = new Command("MOVE", 2, 12, false, E_ROBOT);
+	commands[2] = move;
+	requestData = new Command("SEND", 1, 1, true, E_CONNECTIVITY);
+	commands[3] = requestData;
+	///TODO
+	//Command program("PROGRAM"); 
 }
 
 void BluetoothModule::Start()
@@ -31,23 +43,23 @@ void BluetoothModule::Update()
 		break;
 	}
 
-	//clean data string
-	recieved_data = "";
+	// Clean data string, after each update
+	received_data = "";
 }
 
 void BluetoothModule::AttemptToConnect()
 {
-	if (BT.available()) 
+	if (BT.available())
 	{
-		recieved_data = GetLine_BT();
-		Serial.println(recieved_data); /// TODO: remove
-		if (recieved_data == "OK")
-		{ 
+		received_data = GetLineBT();
+		Serial.println(received_data); /// TODO: remove
+		if (received_data == "OK")
+		{
 			Serial.println("No conectado.");
 			BT.print("AT");
 			time_stamp = millis();
 		}
-		else
+		else ///TODO: solo connected o cualquier cosa?
 		{
 			curr_state = S_CONNECTED;
 		}
@@ -57,41 +69,31 @@ void BluetoothModule::AttemptToConnect()
 		BT.print("AT");
 		time_stamp = millis();
 	}
-		
 }
 
 void BluetoothModule::OnConnection()
 {
 	if (BT.available())
 	{
-		recieved_data = GetLine_BT(); 
-		Serial.println(recieved_data); /// TODO: remove
-		BT.print(recieved_data);
+		received_data = GetLineBT();
+		Serial.print(received_data);	/// TODO: remove. 
+		//BT.print(received_data);		/// Esta es la confirmacion de lo que se ha recibido
 
-		switch (curr_action)
-		{
-		case A_NULL:
-			break;
-		case A_HOPEN:
-			break;
-		case A_HCLOSE:
-			break;
-		case A_MOVE_ART:
-			break;
-		default:
-			break;
-		}
+		ProcessData();
 	}
 
-	if (Serial.available())	/// TODO: remove. Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
+	if (Serial.available())	/// TODO: remove? Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
 	{
-		recieved_data = GetLine_Serial();
-		BT.print(recieved_data); 
-		Serial.print(recieved_data);
+		received_data = GetLineSerial();
+
+		Serial.println(received_data);
+		//BT.println(recieved_data);
+
+		ProcessData();		
 	}
 }
 
-String BluetoothModule::GetLine_BT()
+String BluetoothModule::GetLineBT()
 {
 	String tmp_data = "";
 	if (BT.available())
@@ -107,7 +109,7 @@ String BluetoothModule::GetLine_BT()
 	}
 }
 
-String BluetoothModule::GetLine_Serial() ///TODO: remove
+String BluetoothModule::GetLineSerial() ///TODO: remove
 {
 	String tmp_data = "";
 	if (Serial.available())
@@ -121,7 +123,71 @@ String BluetoothModule::GetLine_Serial() ///TODO: remove
 		}
 		return (tmp_data);
 	}
-
 }
 
+void BluetoothModule::Tokenize(p2List<String> &list, char separator)
+{
+	String tmp_data = received_data;
+	tmp_data += char(-1);
+	for (int i = 0; i < tmp_data.length(); i++)
+	{
+		String tmp = "";
+		while (tmp_data.charAt(i) != -1 && tmp_data.charAt(i) != separator && tmp_data.charAt(i) != '\n')
+		{
+			tmp += tmp_data.charAt(i);
+			i++;
+		}
+		list.add(tmp);
+	}
+}
 
+void BluetoothModule::ProcessData()
+{
+	p2List<String> tokens;
+	Tokenize(tokens, ' ');
+
+	bool immediate = false;
+	bool found = false;
+	EventType type = E_NULL;
+
+	for (int i = 0; i < N_COMMANDS; i++)
+	{
+		if (commands[i]->GetName() == tokens[0])
+		{
+			int num_args = tokens.count() - 1;
+			if (num_args >= commands[i]->GetMinArgs() && num_args <= commands[i]->GetMaxArgs())
+			{
+				found = true;
+				immediate = commands[i]->GetImmediate();
+				type = commands[i]->GetEventType();
+				break;
+			}
+		}
+	}
+
+	if (found)
+	{
+		if (immediate)
+		{
+			switch (type)
+			{
+			case E_NULL:
+				break;
+			case E_ROBOT:
+				///TODO: adaptar SetJointAngles para que vaya con los tokens
+				if (tokens[0] == "JOG") braccio.robot.Jogging(tokens);
+				break;
+			case E_CONNECTIVITY:
+				if (tokens[0] == "DISCONNECT") curr_state = S_DISCONNECTED;
+				///TODO: adaptar GetCurrentAngles para que vaya con los tokens
+				//else (tokens[0] == "SEND") braccio.robot.GetCurrentAngles(tokens);
+				break;
+			}
+		}
+		else
+		{
+			Event e(tokens, type);
+			braccio.event_manager.AddEvent(e);
+		}
+	}
+}

@@ -1,5 +1,4 @@
 #include "RoboticArm.h"
-#include "Arduino.h"
 
 // The default value for the soft start
 #define SOFT_START_LEVEL 0
@@ -12,17 +11,26 @@
 #define LOW_LIMIT_TIMEOUT 2000
 #define HIGH_LIMIT_TIMEOUT 6000
 
-
-// Constructor (initialize Braccio object) plus simple assignation
+// Constructor (initialize Braccio object)
 RoboticArm::RoboticArm(int step_delay)
 {
 	SetDelay(step_delay);
+	base = new Joint("Base", 0, 180, 0);
+	shoulder = new Joint("Shoulder", 15, 165, 90);
+	elbow = new Joint("Elbow", 0, 180, 180);
+	wrist_ver = new Joint("Wrist_ver", 0, 180, 130);
+	wrist_rot = new Joint("Wrist_rot", 0, 180, 90);
+	gripper = new Joint("Gripper", 10, 73, 10);
+	joints[0] = base;
+	joints[1] = shoulder;
+	joints[2] = elbow;
+	joints[3] = wrist_ver;
+	joints[4] = wrist_rot;
+	joints[5] = gripper;
 }
-
 
 void RoboticArm::Start(bool soft_start)
 {
-  ///Serial.print("He entrado al Arm.begin. \n");
 	// Calling Braccio.begin(SOFT_START_DISABLED) the Softstart is disabled and you can use the pin 12
 	if (soft_start) {
 		pinMode(SOFT_START_CONTROL_PIN, OUTPUT);
@@ -30,51 +38,26 @@ void RoboticArm::Start(bool soft_start)
 	}
 
 	// Initialization pin Servo motors
-	base.attach(11);
-	shoulder.attach(10);
-	elbow.attach(9);
-	wrist_ver.attach(6);
-	wrist_rot.attach(5);
-	gripper.attach(3);
-
-	// Set initial position/degree
-	base_angle = 0;
-	shoulder_angle = 45;
-	elbow_angle = 180;
-	wrist_ver_angle = 180;
-	wrist_rot_angle = 90;
-	gripper_angle = 10;
+	base->GetServo().attach(11);
+	shoulder->GetServo().attach(10);
+	elbow->GetServo().attach(9);
+	wrist_ver->GetServo().attach(6);
+	wrist_rot->GetServo().attach(5);
+	gripper->GetServo().attach(3);
 
 	//Move each servo motor to initial position
-	base.write(base_angle);
-	shoulder.write(shoulder_angle);
-	elbow.write(elbow_angle);
-	wrist_ver.write(wrist_ver_angle);
-	wrist_rot.write(wrist_rot_angle);
-	gripper.write(gripper_angle);
+	for (int i = 0; i < 6; i++) {
+		joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
+		Serial.println(joints[i]->GetCurrentAngle());
+	}
 
-
-	if (soft_start)
-		SoftStart(SOFT_START_LEVEL);
-
-  ///Serial.print("He salido del Arm.begin. \n");
+	if (soft_start) SoftStart(SOFT_START_LEVEL);
 }
 
-void RoboticArm::SetGripper(GripperState state)
+void RoboticArm::SetGripper(String gripper_state)
 {
-	switch (state)
-	{
-	case GRIPPER_NULL:
-		break;
-	case GRIPPER_OPEN:
-		target_gripper_angle = 10;
-		break;
-	case GRIPPER_CLOSE:
-		target_gripper_angle = 73;
-		break;
-	default:
-		break;
-	}
+	if (gripper_state == "hopen") gripper->SetTargetAngle(10);
+	else if (gripper_state == "hclose") gripper->SetTargetAngle(73);
 }
 
 void RoboticArm::SetDelay(int _step_delay)
@@ -84,126 +67,82 @@ void RoboticArm::SetDelay(int _step_delay)
 	step_delay = _step_delay;
 }
 
-void RoboticArm::SetAngles(Servos servos, int angle)
+void RoboticArm::SetJointAngles(String servo_name, int angle)
 {
-	switch (servos)
+	bool found = false;
+	int i;
+	for (i = 0; i < 6; i++)
 	{
-	case S_BASE:
-		target_base_angle = angle;
-		break;
-	case S_SHOULDER:
-		target_shoulder_angle = angle;
-		break;
-	case S_ELBOW:
-		target_gripper_angle = angle;
-		break;
-	case S_WRIST_VER:
-		target_wrist_ver_angle = angle;
-		break;
-	case S_WRIST_ROT:
-		target_wrist_rot_angle = angle;
-		break;
-	default:
-		break;
+		if (servo_name == joints[i]->GetName())
+		{
+			found = true;
+			break;
+		}
 	}
+
+	if (found)
+	{
+    Serial.println(angle);
+		if (angle < joints[i]->GetMinAngle()) angle = joints[i]->GetMinAngle();
+		if (angle > joints[i]->GetMaxAngle()) angle = joints[i]->GetMaxAngle();
+		joints[i]->SetTargetAngle(angle);
+	}
+
+	for (i = 0; i < 6; i++) {
+		Serial.print(joints[i]->GetName());
+		Serial.print(": ");
+		Serial.println(joints[i]->GetCurrentAngle());
+	}
+}
+
+int RoboticArm::GetCurrentAngles(String servo_name)
+{
+	bool found = false;
+	int i;
+	for (i = 0; i < 6; i++)
+	{
+		if (servo_name == joints[i]->GetName())
+		{
+			found = true;
+			break;
+		}
+	}
+
+	if (found) return (joints[i]->GetCurrentAngle());
+	else return -1;
 }
 
 void RoboticArm::Move()
 {
-	// Check values, to avoid dangerous positions for the Braccio
-	if (target_base_angle < 0) target_base_angle = 0;
-	if (target_base_angle > 180) target_base_angle = 180;
-	if (target_shoulder_angle < 15) target_shoulder_angle = 15;
-	if (target_shoulder_angle > 165) target_shoulder_angle = 165;
-	if (target_elbow_angle < 0) target_elbow_angle = 0;
-	if (target_elbow_angle > 180) target_elbow_angle = 180;
-	if (target_wrist_ver_angle < 0) target_wrist_ver_angle = 0;
-	if (target_wrist_ver_angle > 180) target_wrist_ver_angle = 180;
-	if (target_wrist_rot_angle < 0) target_wrist_rot_angle = 0;
-	if (target_wrist_rot_angle > 180) target_wrist_rot_angle = 180;
-	if (target_gripper_angle < 10) target_gripper_angle = 10;
-	if (target_gripper_angle > 73) target_gripper_angle = 73;
+	//For each servo motor if next degree is not the same of the previuos than do the movement
 
-	//For each servo motor if next degree is not the same of the previuos than do the movement		
-	if (target_base_angle != base_angle)
+	for (int i = 0; i < 6; i++)
 	{
-		//One step ahead
-		if (target_base_angle > base_angle) {
-			base_angle++;
-		}
-		//One step beyond
-		if (target_base_angle < base_angle) {
-			base_angle--;
-		}
-		base.write(base_angle);
-	}
+		int target_angle = joints[i]->GetTargetAngle();
+		int current_angle = joints[i]->GetCurrentAngle();
+		if (target_angle != current_angle)
+		{
+			//One step ahead
+			if (target_angle > current_angle) {
+				current_angle++;
+			}
+			//One step beyond
+			if (target_angle < current_angle) {
+				current_angle--;
+			}
+			joints[i]->SetCurrentAngle(current_angle);
+			joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
 
-	if (target_shoulder_angle != shoulder_angle)
-	{
-		//One step ahead
-		if (target_shoulder_angle > shoulder_angle) {
-			shoulder_angle++;
+      Serial.print("Moved--> ");
+      Serial.print(joints[i]->GetName());
+      Serial.print(": ");
+      Serial.println(joints[i]->GetCurrentAngle());
 		}
-		//One step beyond
-		if (target_shoulder_angle < shoulder_angle) {
-			shoulder_angle--;
-		}
-		shoulder.write(shoulder_angle);
-	}
-
-	if (target_elbow_angle != elbow_angle)
-	{
-		//One step ahead
-		if (target_elbow_angle > elbow_angle) {
-			elbow_angle++;
-		}
-		//One step beyond
-		if (target_elbow_angle < elbow_angle) {
-			elbow_angle--;
-		}
-		elbow.write(elbow_angle);
-	}
-
-	if (target_wrist_ver_angle != wrist_ver_angle)
-	{
-		//One step ahead
-		if (target_wrist_ver_angle > wrist_ver_angle) {
-			wrist_ver_angle++;
-		}
-		//One step beyond
-		if (target_wrist_ver_angle < wrist_ver_angle) {
-			wrist_ver_angle--;
-		}
-		wrist_rot.write(wrist_ver_angle);
-	}
-
-	if (target_wrist_rot_angle != wrist_rot_angle)
-	{
-		//One step ahead
-		if (target_wrist_rot_angle > wrist_rot_angle) {
-			wrist_rot_angle++;
-		}
-		//One step beyond
-		if (target_wrist_rot_angle < wrist_rot_angle) {
-			wrist_rot_angle--;
-		}
-		wrist_ver.write(wrist_rot_angle);
-	}
-
-	if (target_gripper_angle != gripper_angle)
-	{
-		if (target_gripper_angle > gripper_angle) {
-			gripper_angle++;
-		}
-		//One step beyond
-		if (target_gripper_angle < gripper_angle) {
-			gripper_angle--;
-		}
-		gripper.write(gripper_angle);
 	}
 
 	//delay to let finish the little movement
 	delay(step_delay);
+  delay(500);
 }
 
 // This function, used only with the Braccio Shield V4 and greater,
@@ -232,4 +171,3 @@ void RoboticArm::SoftwarePWM(int high_time, int low_time)
 	digitalWrite(SOFT_START_CONTROL_PIN, LOW);
 	delayMicroseconds(low_time);
 }
-

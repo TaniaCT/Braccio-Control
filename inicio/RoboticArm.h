@@ -2,26 +2,11 @@
 #define __ROBOTICARM__
 
 #include <Servo.h>
+#include "Arduino.h"
+#include "JointClass.h"
 
 class RoboticArm
 {
-public:
-	// Gripper possible states
-	enum GripperState
-	{
-		GRIPPER_NULL,										/// Se pone por seguridad
-		GRIPPER_OPEN,
-		GRIPPER_CLOSE
-	};
-
-	enum Servos
-	{
-		S_BASE,
-		S_SHOULDER,
-		S_ELBOW,
-		S_WRIST_VER,
-		S_WRIST_ROT
-	};
 public:
 	// Constructor. Needs to set a delay in ms between 10 and 30.
 	RoboticArm(int step_delay = 20);
@@ -33,13 +18,18 @@ public:
 	void Move();
 
 	// Sets the state of the gripper: GRIPPER_OPEN, GRIPPER_CLOSE
-	void SetGripper(GripperState state);
+	void SetGripper(String gripper_state);
 
 	// Sets a new delay between single movements from 10 up to 30.
 	void SetDelay(int step_delay);
 
-	// Sets...
-	void SetAngles(Servos servos, int angle);
+	// Sets the target angle of a determinate joint ("Base", "Shoulder", 
+	//"Elbow", "Wrist_ver", "Wrist_rot", "Gripper")
+	// If the angle is not inside the range of the joint, the limit values
+	// will be set.
+	void SetJointAngles(String servo_name, int angle);
+
+	int GetCurrentAngles(String servo_name);
 
 private:
 	// This function, used only with the Braccio Shield V4 and greater,
@@ -54,29 +44,16 @@ private:
 	void SoftwarePWM(int high_time, int low_time);
 
 private:
-	Servo base;
-	Servo shoulder;
-	Servo elbow; 
-	Servo wrist_ver; 
-	Servo wrist_rot; 
-	Servo gripper; 
 
 	int step_delay;
 
-	//current angles = default values
-	int base_angle = 0;
-	int shoulder_angle = 45;
-	int elbow_angle = 180;
-	int wrist_ver_angle = 180;
-	int wrist_rot_angle = 90;
-	int gripper_angle = 10;
-
-	//target angles = default values
-	int target_base_angle = 0;
-	int target_shoulder_angle = 45;
-	int target_elbow_angle = 180;
-	int target_wrist_ver_angle = 180;
-	int target_wrist_rot_angle = 90;
-	int target_gripper_angle = 10;
+	Joint* base;
+	Joint* shoulder;
+	Joint* elbow;
+	Joint* wrist_ver;
+	Joint* wrist_rot;
+	Joint* gripper;
+	Joint* joints[6];
 };
+
 #endif

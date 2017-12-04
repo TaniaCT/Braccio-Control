@@ -1,22 +1,21 @@
 #include "BraccioControl.h"
-#include "Arduino.h"
 
-BraccioControl::BraccioControl() 
+BraccioControl::BraccioControl()
 {
-	modules[0] = &BTMod;
+	modules[0] = &bt_module;
+	modules[1] = &event_manager;
+	modules[2] = &robot;
 }
 
-void BraccioControl::Start() 
+void BraccioControl::Start()
 {
-  ///Serial.print("He entrado al Braccio Control. \n");
-	for (int i= 0; i < MODULES; ++i) 
+	for (int i = 0; i < MODULES; ++i)
 		modules[i]->Start();
-  ///Serial.print("He salido del Braccio Control. \n");
 }
 
-void BraccioControl::Update() 
+void BraccioControl::Update()
 {
-	for (int i = 0; i < MODULES; ++i) 
+	for (int i = 0; i < MODULES; ++i)
 		modules[i]->Update();
 }
 
