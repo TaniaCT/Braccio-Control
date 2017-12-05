@@ -12,7 +12,7 @@ BluetoothModule::BluetoothModule()
 	commands[1] = disconnect;
 	move = new Command("MOVE", 2, 12, false, E_ROBOT);
 	commands[2] = move;
-	requestData = new Command("SEND", 1, 1, true, E_CONNECTIVITY);
+	requestData = new Command("REQUEST", 0, 0, true, E_CONNECTIVITY); //It always send all the angles when requested
 	commands[3] = requestData;
 	///TODO
 	//Command program("PROGRAM"); 
@@ -47,6 +47,11 @@ void BluetoothModule::Update()
 	received_data = "";
 }
 
+void BluetoothModule::WriteBluetooth(String data)
+{
+  BT.print(data+"#");
+}
+
 void BluetoothModule::AttemptToConnect()
 {
 	if (BT.available())
@@ -76,8 +81,8 @@ void BluetoothModule::OnConnection()
 	if (BT.available())
 	{
 		received_data = GetLineBT();
-		Serial.print(received_data);	/// TODO: remove. 
-		//BT.print(received_data);		/// Esta es la confirmacion de lo que se ha recibido
+		Serial.println(received_data);	/// TODO: remove. 
+		//BT.print(received_data+"#");		/// Esta es la confirmacion de lo que se ha recibido
 
 		ProcessData();
 	}
@@ -87,7 +92,8 @@ void BluetoothModule::OnConnection()
 		received_data = GetLineSerial();
 
 		Serial.println(received_data);
-		//BT.println(recieved_data);
+    Serial.println("Enviando...");
+		//BT.print(received_data+"#");
 
 		ProcessData();		
 	}
@@ -174,13 +180,11 @@ void BluetoothModule::ProcessData()
 			case E_NULL:
 				break;
 			case E_ROBOT:
-				///TODO: adaptar SetJointAngles para que vaya con los tokens
 				if (tokens[0] == "JOG") braccio.robot.Jogging(tokens);
 				break;
 			case E_CONNECTIVITY:
 				if (tokens[0] == "DISCONNECT") curr_state = S_DISCONNECTED;
-				///TODO: adaptar GetCurrentAngles para que vaya con los tokens
-				//else (tokens[0] == "SEND") braccio.robot.GetCurrentAngles(tokens);
+				else if (tokens[0] == "REQUEST") BT.print(braccio.robot.GetCurrentAngles()+"#");
 				break;
 			}
 		}

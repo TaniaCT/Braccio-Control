@@ -27,7 +27,7 @@ public:
 
 	void MoveCommand(p2List<String> &list);
 
-	int GetJointAngles(String servo_name);
+	String GetCurrentAngles();
 
 private:
 	RoboticArm arm;

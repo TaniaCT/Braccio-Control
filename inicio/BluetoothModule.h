@@ -29,6 +29,8 @@ public:
 	// Update of the Bluetooht variables
 	void Update();
 
+  void WriteBluetooth(String data);
+
 private:
 	// Manages the current state of the connection
 	void AttemptToConnect();

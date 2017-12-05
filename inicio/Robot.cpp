@@ -47,7 +47,20 @@ void Robot::MoveCommand(p2List<String>& list)
 	}
 }
 
-int Robot::GetJointAngles(String servo_name)
+String Robot::GetCurrentAngles()
 {
-	return arm.GetCurrentAngles(servo_name);
+	String angles = "RESPONSE ";
+	angles.concat(String(arm.GetCurrentAngles("Base")));
+	angles.concat(" ");
+	angles.concat(String(arm.GetCurrentAngles("Shoulder")));
+	angles.concat(" ");
+	angles.concat(String(arm.GetCurrentAngles("Elbow")));
+	angles.concat(" ");
+	angles.concat(String(arm.GetCurrentAngles("Wrist_ver")));
+	angles.concat(" ");
+	angles.concat(String(arm.GetCurrentAngles("Wrist_rot")));
+	angles.concat(" ");
+	angles.concat(String(arm.GetCurrentAngles("Gripper")));
+
+	return angles;
 }

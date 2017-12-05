@@ -1,4 +1,5 @@
 #include "RoboticArm.h"
+#include "BraccioControl.h"
 
 // The default value for the soft start
 #define SOFT_START_LEVEL 0
@@ -82,7 +83,6 @@ void RoboticArm::SetJointAngles(String servo_name, int angle)
 
 	if (found)
 	{
-    Serial.println(angle);
 		if (angle < joints[i]->GetMinAngle()) angle = joints[i]->GetMinAngle();
 		if (angle > joints[i]->GetMaxAngle()) angle = joints[i]->GetMaxAngle();
 		joints[i]->SetTargetAngle(angle);
@@ -137,6 +137,8 @@ void RoboticArm::Move()
       Serial.print(joints[i]->GetName());
       Serial.print(": ");
       Serial.println(joints[i]->GetCurrentAngle());
+
+      braccio.bt_module.WriteBluetooth(braccio.robot.GetCurrentAngles()+"#");
 		}
 	}
 
