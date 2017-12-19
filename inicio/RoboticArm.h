@@ -46,6 +46,8 @@ private:
 private:
 
 	int step_delay;
+ bool moving = false;
+ bool send_message = false;
 
 	Joint* base;
 	Joint* shoulder;

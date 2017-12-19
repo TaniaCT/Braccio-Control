@@ -8,12 +8,14 @@ BluetoothModule::BluetoothModule()
 {
 	jogging = new Command("JOG", 2, 2, true, E_ROBOT);
 	commands[0] = jogging;
-	disconnect = new Command("DISCON", 0, 0, true, E_CONNECTIVITY);
+	disconnect = new Command("DISCONNECT", 0, 0, true, E_CONNECTIVITY);
 	commands[1] = disconnect;
 	move = new Command("MOVE", 2, 12, false, E_ROBOT);
 	commands[2] = move;
 	requestData = new Command("REQUEST", 0, 0, true, E_CONNECTIVITY); //It always send all the angles when requested
 	commands[3] = requestData;
+	send = new Command("SEND", 1, 20, true, E_CONNECTIVITY);
+	commands[4] = send;
 	///TODO
 	//Command program("PROGRAM"); 
 }
@@ -49,7 +51,13 @@ void BluetoothModule::Update()
 
 void BluetoothModule::WriteBluetooth(String data)
 {
-  BT.print(data+"#");
+  Serial.println(data);
+	BT.print(data + "#");
+}
+
+int BluetoothModule::GetBluetoothState()
+{
+	return curr_state;
 }
 
 void BluetoothModule::AttemptToConnect()
@@ -57,19 +65,21 @@ void BluetoothModule::AttemptToConnect()
 	if (BT.available())
 	{
 		received_data = GetLineBT();
-		Serial.println(received_data); /// TODO: remove
-		if (received_data == "OK")
+		if (received_data == "OK" && !disconnect_checked)
 		{
-			Serial.println("No conectado.");
-			BT.print("AT");
-			time_stamp = millis();
+      disconnect_checked = true;
+      Serial.println(received_data);
+			Serial.println("Unconnected.");
+			//BT.print("AT");
+			//time_stamp = millis();
 		}
-		else ///TODO: solo connected o cualquier cosa?
+		else
 		{
+      Serial.println("Connected.");
 			curr_state = S_CONNECTED;
 		}
 	}
-	else if (millis() - time_stamp > 1000)
+	else if ((millis() - time_stamp > 1000) && !disconnect_checked)
 	{
 		BT.print("AT");
 		time_stamp = millis();
@@ -81,6 +91,7 @@ void BluetoothModule::OnConnection()
 	if (BT.available())
 	{
 		received_data = GetLineBT();
+    Serial.print("Received --> ");
 		Serial.println(received_data);	/// TODO: remove. 
 		//BT.print(received_data+"#");		/// Esta es la confirmacion de lo que se ha recibido
 
@@ -90,12 +101,10 @@ void BluetoothModule::OnConnection()
 	if (Serial.available())	/// TODO: remove? Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
 	{
 		received_data = GetLineSerial();
-
+    Serial.print("Received --> ");
 		Serial.println(received_data);
-    Serial.println("Enviando...");
-		//BT.print(received_data+"#");
 
-		ProcessData();		
+		ProcessData();
 	}
 }
 
@@ -131,9 +140,8 @@ String BluetoothModule::GetLineSerial() ///TODO: remove
 	}
 }
 
-void BluetoothModule::Tokenize(p2List<String> &list, char separator)
+void BluetoothModule::Tokenize(String tmp_data, p2List<String> &list, char separator)
 {
-	String tmp_data = received_data;
 	tmp_data += char(-1);
 	for (int i = 0; i < tmp_data.length(); i++)
 	{
@@ -150,7 +158,7 @@ void BluetoothModule::Tokenize(p2List<String> &list, char separator)
 void BluetoothModule::ProcessData()
 {
 	p2List<String> tokens;
-	Tokenize(tokens, ' ');
+	Tokenize(received_data, tokens, ' ');
 
 	bool immediate = false;
 	bool found = false;
@@ -183,8 +191,25 @@ void BluetoothModule::ProcessData()
 				if (tokens[0] == "JOG") braccio.robot.Jogging(tokens);
 				break;
 			case E_CONNECTIVITY:
-				if (tokens[0] == "DISCONNECT") curr_state = S_DISCONNECTED;
-				else if (tokens[0] == "REQUEST") BT.print(braccio.robot.GetCurrentAngles()+"#");
+				if (tokens[0] == "DISCONNECT") {
+				  curr_state = S_DISCONNECTED;
+          disconnect_checked = false;
+				}
+				else if (tokens[0] == "REQUEST")
+				{
+					Serial.println(braccio.robot.BuildStringCurrentAngles());
+					WriteBluetooth(braccio.robot.BuildStringCurrentAngles());
+				}
+				else if (tokens[0] == "SEND")
+				{
+          String tmp_data = "";
+					for (p2List_item<String>* item = tokens.start->next; item != nullptr; item = item->next)
+					{
+						tmp_data += item->data;
+           if (item != tokens.end) tmp_data += " ";
+					}
+          WriteBluetooth(tmp_data);
+				}
 				break;
 			}
 		}

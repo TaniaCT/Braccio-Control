@@ -39,7 +39,7 @@ void RoboticArm::Start(bool soft_start)
 	}
 
 	// Initialization pin Servo motors
-	base->GetServo().attach(11);
+	base->GetServo().attach(8);
 	shoulder->GetServo().attach(10);
 	elbow->GetServo().attach(9);
 	wrist_ver->GetServo().attach(6);
@@ -49,6 +49,8 @@ void RoboticArm::Start(bool soft_start)
 	//Move each servo motor to initial position
 	for (int i = 0; i < 6; i++) {
 		joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
+		Serial.print(joints[i]->GetName());
+		Serial.print(": ");
 		Serial.println(joints[i]->GetCurrentAngle());
 	}
 
@@ -86,9 +88,7 @@ void RoboticArm::SetJointAngles(String servo_name, int angle)
 		if (angle < joints[i]->GetMinAngle()) angle = joints[i]->GetMinAngle();
 		if (angle > joints[i]->GetMaxAngle()) angle = joints[i]->GetMaxAngle();
 		joints[i]->SetTargetAngle(angle);
-	}
-
-	for (i = 0; i < 6; i++) {
+		Serial.print("SET -> ");
 		Serial.print(joints[i]->GetName());
 		Serial.print(": ");
 		Serial.println(joints[i]->GetCurrentAngle());
@@ -114,14 +114,15 @@ int RoboticArm::GetCurrentAngles(String servo_name)
 
 void RoboticArm::Move()
 {
+  moving = false;
 	//For each servo motor if next degree is not the same of the previuos than do the movement
-
 	for (int i = 0; i < 6; i++)
 	{
 		int target_angle = joints[i]->GetTargetAngle();
 		int current_angle = joints[i]->GetCurrentAngle();
 		if (target_angle != current_angle)
 		{
+      moving = true;
 			//One step ahead
 			if (target_angle > current_angle) {
 				current_angle++;
@@ -133,18 +134,28 @@ void RoboticArm::Move()
 			joints[i]->SetCurrentAngle(current_angle);
 			joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
 
-      Serial.print("Moved--> ");
-      Serial.print(joints[i]->GetName());
-      Serial.print(": ");
-      Serial.println(joints[i]->GetCurrentAngle());
-
-      braccio.bt_module.WriteBluetooth(braccio.robot.GetCurrentAngles()+"#");
+			Serial.print("Moved--> ");
+			Serial.print(joints[i]->GetName());
+			Serial.print(": ");
+			Serial.println(joints[i]->GetCurrentAngle());
 		}
 	}
 
+ if (moving) {
+  send_message = true;
+ }
+  //If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
+ if ((braccio.bt_module.GetBluetoothState() == 1)&& !moving && send_message)
+ {
+  Serial.println("Sent");
+  Serial.println(braccio.robot.BuildStringCurrentAngles());
+  braccio.bt_module.WriteBluetooth(braccio.robot.BuildStringCurrentAngles());
+  send_message = false;
+ }
+
 	//delay to let finish the little movement
 	delay(step_delay);
-  delay(500);
+	delay(500);
 }
 
 // This function, used only with the Braccio Shield V4 and greater,

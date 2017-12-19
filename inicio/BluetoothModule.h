@@ -8,7 +8,7 @@
 #include "Arduino.h"
 
 #define ARGUMENTS 3
-#define N_COMMANDS 4
+#define N_COMMANDS 5
 
 class BluetoothModule : public Module
 {
@@ -31,6 +31,8 @@ public:
 
   void WriteBluetooth(String data);
 
+  int GetBluetoothState();
+
 private:
 	// Manages the current state of the connection
 	void AttemptToConnect();
@@ -45,7 +47,7 @@ private:
 	String GetLineSerial(); ///TODO: remove
 
 	// Separates each argument separated by a "separator" and put them in a dinamic list
-	void Tokenize(p2List<String> &list, char separator);
+	void Tokenize(String tmp_data, p2List<String> &list, char separator);
 
 	void ProcessData();
 
@@ -53,11 +55,13 @@ private:
 
 	unsigned long time_stamp = 0;
 	String received_data = "";
+  bool disconnect_checked = false;
 	State curr_state = S_NULL;
 	Command* jogging;
 	Command* disconnect;
 	Command* move;
 	Command* requestData;
+	Command* send;
 	Command* commands[N_COMMANDS];
 
 };

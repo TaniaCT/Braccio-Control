@@ -17,7 +17,6 @@ public:
 	int GetTargetAngle(); ///TODO: borrar si es innecesario
 	void SetTargetAngle(int angle);
 
-
 private:
 	Servo servo;
 	String joint_name;
@@ -25,7 +24,6 @@ private:
 	int max_angle;
 	int current_angle;
 	int target_angle;
-
 };
 
 #endif 

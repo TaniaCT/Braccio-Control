@@ -47,7 +47,7 @@ void Robot::MoveCommand(p2List<String>& list)
 	}
 }
 
-String Robot::GetCurrentAngles()
+String Robot::BuildStringCurrentAngles()
 {
 	String angles = "RESPONSE ";
 	angles.concat(String(arm.GetCurrentAngles("Base")));

@@ -48,3 +48,4 @@ void Joint::SetTargetAngle(int angle)
 {
 	target_angle = angle;
 }
+

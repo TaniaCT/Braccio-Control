@@ -27,7 +27,7 @@ public:
 
 	void MoveCommand(p2List<String> &list);
 
-	String GetCurrentAngles();
+	String BuildStringCurrentAngles();
 
 private:
 	RoboticArm arm;
