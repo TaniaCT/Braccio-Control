@@ -29,9 +29,11 @@ public:
 	// Update of the Bluetooht variables
 	void Update();
 
-  void WriteBluetooth(String data);
+	void WriteBluetooth(String data);
 
-  int GetBluetoothState();
+	int GetBluetoothState();
+
+	void SetBluetoothStateDisconnected();
 
 private:
 	// Manages the current state of the connection
@@ -44,25 +46,25 @@ private:
 	String GetLineBT();
 
 	// Enables to get a string of data instead of a single character from the PC console
-	String GetLineSerial(); ///TODO: remove
+	//String GetLineSerial(); ///TODO: remove
 
 	// Separates each argument separated by a "separator" and put them in a dinamic list
-	void Tokenize(String tmp_data, p2List<String> &list, char separator);
+	//void Tokenize(String tmp_data, p2List<String> &list, char separator);
 
-	void ProcessData();
+	//void ProcessData();
 
 private:
 
 	unsigned long time_stamp = 0;
 	String received_data = "";
-  bool disconnect_checked = false;
+	bool disconnect_checked = false;
 	State curr_state = S_NULL;
-	Command* jogging;
+	/*Command* jogging;
 	Command* disconnect;
 	Command* move;
 	Command* requestData;
 	Command* send;
-	Command* commands[N_COMMANDS];
+	Command* commands[N_COMMANDS];*/
 
 };
 #endif

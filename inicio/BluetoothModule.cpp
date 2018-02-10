@@ -1,12 +1,13 @@
 #include "BluetoothModule.h"
 #include "BraccioControl.h"
-#include "EventManager.h"
+//#include "EventManager.h"
+#include "ProcessDataModule.h"
 
 SoftwareSerial BT(4, 2); // RX TX
 
 BluetoothModule::BluetoothModule()
 {
-	jogging = new Command("JOG", 2, 2, true, E_ROBOT);
+	/*jogging = new Command("JOG", 2, 2, true, E_ROBOT);
 	commands[0] = jogging;
 	disconnect = new Command("DISCONNECT", 0, 0, true, E_CONNECTIVITY);
 	commands[1] = disconnect;
@@ -17,12 +18,12 @@ BluetoothModule::BluetoothModule()
 	send = new Command("SEND", 1, 20, true, E_CONNECTIVITY);
 	commands[4] = send;
 	///TODO
-	//Command program("PROGRAM"); 
+	//Command program("PROGRAM");*/ 
 }
 
 void BluetoothModule::Start()
 {
-	Serial.begin(9600);
+	//Serial.begin(9600);
 	BT.begin(9600);
 	curr_state = S_DISCONNECTED;
 	BT.print("AT");
@@ -51,13 +52,19 @@ void BluetoothModule::Update()
 
 void BluetoothModule::WriteBluetooth(String data)
 {
-  Serial.println(data);
+	Serial.println(data);
 	BT.print(data + "#");
 }
 
 int BluetoothModule::GetBluetoothState()
 {
 	return curr_state;
+}
+
+void BluetoothModule::SetBluetoothStateDisconnected()
+{
+	curr_state = S_DISCONNECTED;
+	disconnect_checked = false;
 }
 
 void BluetoothModule::AttemptToConnect()
@@ -67,15 +74,15 @@ void BluetoothModule::AttemptToConnect()
 		received_data = GetLineBT();
 		if (received_data == "OK" && !disconnect_checked)
 		{
-      disconnect_checked = true;
-      Serial.println(received_data);
+			disconnect_checked = true;
+			Serial.println(received_data);
 			Serial.println("Unconnected.");
 			//BT.print("AT");
 			//time_stamp = millis();
 		}
 		else
 		{
-      Serial.println("Connected.");
+			Serial.println("Connected.");
 			curr_state = S_CONNECTED;
 		}
 	}
@@ -91,21 +98,21 @@ void BluetoothModule::OnConnection()
 	if (BT.available())
 	{
 		received_data = GetLineBT();
-    Serial.print("Received --> ");
+		Serial.print("Received --> ");
 		Serial.println(received_data);	/// TODO: remove. 
 		//BT.print(received_data+"#");		/// Esta es la confirmacion de lo que se ha recibido
 
-		ProcessData();
+		braccio.process_data.ProcessData(received_data);
 	}
 
-	if (Serial.available())	/// TODO: remove? Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
+	/*if (Serial.available())	/// TODO: remove? Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
 	{
 		received_data = GetLineSerial();
-    Serial.print("Received --> ");
+		Serial.print("Received --> ");
 		Serial.println(received_data);
 
 		ProcessData();
-	}
+	}*/
 }
 
 String BluetoothModule::GetLineBT()
@@ -124,7 +131,7 @@ String BluetoothModule::GetLineBT()
 	}
 }
 
-String BluetoothModule::GetLineSerial() ///TODO: remove
+/*String BluetoothModule::GetLineSerial() ///TODO: remove
 {
 	String tmp_data = "";
 	if (Serial.available())
@@ -138,9 +145,9 @@ String BluetoothModule::GetLineSerial() ///TODO: remove
 		}
 		return (tmp_data);
 	}
-}
+}*/
 
-void BluetoothModule::Tokenize(String tmp_data, p2List<String> &list, char separator)
+/*void BluetoothModule::Tokenize(String tmp_data, p2List<String> &list, char separator)
 {
 	tmp_data += char(-1);
 	for (int i = 0; i < tmp_data.length(); i++)
@@ -153,9 +160,9 @@ void BluetoothModule::Tokenize(String tmp_data, p2List<String> &list, char separ
 		}
 		list.add(tmp);
 	}
-}
+}*/
 
-void BluetoothModule::ProcessData()
+/*void BluetoothModule::ProcessData()
 {
 	p2List<String> tokens;
 	Tokenize(received_data, tokens, ' ');
@@ -192,8 +199,8 @@ void BluetoothModule::ProcessData()
 				break;
 			case E_CONNECTIVITY:
 				if (tokens[0] == "DISCONNECT") {
-				  curr_state = S_DISCONNECTED;
-          disconnect_checked = false;
+					curr_state = S_DISCONNECTED;
+					disconnect_checked = false;
 				}
 				else if (tokens[0] == "REQUEST")
 				{
@@ -202,13 +209,13 @@ void BluetoothModule::ProcessData()
 				}
 				else if (tokens[0] == "SEND")
 				{
-          String tmp_data = "";
+				String tmp_data = "";
 					for (p2List_item<String>* item = tokens.start->next; item != nullptr; item = item->next)
 					{
 						tmp_data += item->data;
-           if (item != tokens.end) tmp_data += " ";
+						if (item != tokens.end) tmp_data += " ";
 					}
-          WriteBluetooth(tmp_data);
+				WriteBluetooth(tmp_data);
 				}
 				break;
 			}
@@ -219,4 +226,4 @@ void BluetoothModule::ProcessData()
 			braccio.event_manager.AddEvent(e);
 		}
 	}
-}
+}*/

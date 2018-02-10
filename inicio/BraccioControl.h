@@ -5,8 +5,10 @@
 #include "Robot.h"
 #include "BluetoothModule.h"
 #include "EventManager.h"
+#include "ProcessDataModule.h"
+#include "SerialModule.h"
 
-#define MODULES 3
+#define MODULES 5
 
 class BraccioControl
 {
@@ -27,6 +29,8 @@ public:
 	Robot robot;
 	BluetoothModule bt_module;
 	EventManager event_manager;
+	ProcessDataModule process_data;
+	SerialModule serial_mod;
 	Module* modules[MODULES];
 };
 
