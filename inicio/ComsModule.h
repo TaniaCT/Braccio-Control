@@ -5,6 +5,7 @@
 #include "Communication.h"
 #include "BluetoothModule.h"
 #include "SerialModule.h"
+#include "EventClass.h"
 
 #define NUM_COMS 2
 

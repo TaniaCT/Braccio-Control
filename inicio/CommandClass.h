@@ -2,11 +2,12 @@
 #define __COMMANDCLASS__
 
 #include "EventManager.h"
+#include "EventClass.h"
 
 class Command
 {
 public:
-	Command(String name, int min_args, int max_args, bool immediate, EventType type);
+	Command(String name, int min_args, int max_args, bool immediate, Event::EventType type);
 
 	String GetName() const;
 
@@ -16,14 +17,14 @@ public:
 
 	bool GetImmediate() const;
 
-	EventType GetEventType() const;
+	Event::EventType GetEventType() const;
 
 private:
 	String name;
 	int min_args;
 	int max_args;
 	bool immediate;
-	EventType type;
+	Event::EventType type;
 };
 
 #endif

@@ -17,7 +17,7 @@ public:
 
 	void AddEvent(Event &e);
 
-	bool RequestEvent(EventType type, Event &e);
+	bool RequestEvent(Event::EventType type, Event &e);
 
 private:
 	p2List<Event> event_list;

@@ -1,6 +1,6 @@
 #include "CommandClass.h"
 
-Command::Command(String name, int min_args, int max_args, bool immediate, EventType type)
+Command::Command(String name, int min_args, int max_args, bool immediate, Event::EventType type)
 {
 	this->name = name;
 	this->min_args = min_args;
@@ -29,7 +29,7 @@ bool Command::GetImmediate() const
 	return immediate;
 }
 
-EventType Command::GetEventType() const
+Event::EventType Command::GetEventType() const
 {
 	return type;
 }

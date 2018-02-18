@@ -11,7 +11,8 @@ void RobotModule::Start()
 
 void RobotModule::Update()
 {
-	arm.Move();
+	//Serial.println("Updating robot module");
+	//arm.Move();
 }
 
 void RobotModule::SetDelay(int step_delay)
