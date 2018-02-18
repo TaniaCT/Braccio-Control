@@ -1,8 +1,9 @@
 #include "ProcessDataModule.h"
 #include "BraccioControl.h"
 #include "BluetoothModule.h"
-#include "Robot.h"
+#include "RobotModule.h"
 #include "EventManager.h"
+#include "ComsModule.h"
 
 ProcessDataModule::ProcessDataModule()
 {
@@ -16,8 +17,8 @@ ProcessDataModule::ProcessDataModule()
 	commands[3] = request_data;
 	send = new Command("SEND", 1, 20, true, E_CONNECTIVITY);
 	commands[4] = send;
-	///TODO
-	//Command program("PROGRAM");
+	program = new Command("PROGRAM", 1, 20, true, E_CONNECTIVITY);
+	commands[5] = program;
 }
 
 void ProcessDataModule::Start()
@@ -65,14 +66,14 @@ void ProcessDataModule::ProcessData(String received_data)
 				break;
 			case E_CONNECTIVITY:
 				if (tokens[0] == "DISCONNECT") {
-					braccio.bt_module.SetBluetoothStateDisconnected();
+					braccio.coms_module.DisconnectComs("Bluetooth");
 				}
 				else if (tokens[0] == "REQUEST")
 				{
 					Serial.println(braccio.robot.BuildStringCurrentAngles());
-					braccio.bt_module.WriteBluetooth(braccio.robot.BuildStringCurrentAngles());
+					braccio.coms_module.SendData(braccio.robot.BuildStringCurrentAngles(), "Bluetooth");
 				}
-				else if (tokens[0] == "SEND")
+				else if (tokens[0] == "SEND") /// TODO: Tener en cuenta todos los tipos de comunicación abiertos. Restriccion: solo un modo a la vez
 				{
 					String tmp_data = "";
 					for (p2List_item<String>* item = tokens.start->next; item != nullptr; item = item->next)
@@ -80,7 +81,7 @@ void ProcessDataModule::ProcessData(String received_data)
 						tmp_data += item->data;
 						if (item != tokens.end) tmp_data += " ";
 					}
-					braccio.bt_module.WriteBluetooth(tmp_data);
+					braccio.coms_module.SendData(tmp_data, "Bluetooth");
 				}
 				break;
 			}

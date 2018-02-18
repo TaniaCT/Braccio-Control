@@ -1,26 +1,24 @@
 #ifndef __SERIALMODULE__
 #define __SERIALMODULE__
 
-#include "Modules.h"
+#include "Communication.h"
 #include "Arduino.h"
 
-class SerialModule : public Module
+class SerialModule : public Communication
 {
 public:
 	SerialModule();
 
 	void Start();
 
-	void Update();
+	//void Update();
 
-	void WriteSerial(String data);
+	void SendData(String data);
 
-private:
+	void AttemptToConnect() {}
+
 	// Enables to get a string of data instead of a single character from the PC console
-	String GetLineSerial();
-
-private:
-	String received_data = "";
+	String GetData();
 };
 
 #endif

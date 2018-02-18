@@ -1,36 +1,38 @@
 #include "SerialModule.h"
-#include "BraccioControl.h"
-#include "ProcessDataModule.h"
 
 SerialModule::SerialModule()
 {
+	SetName("Serial");
 }
 
 void SerialModule::Start()
 {
 	Serial.begin(9600);
+	SetState(S_CONNECTED);
 	//while (!Serial); 
 	///TODO: probar
 }
 
-void SerialModule::Update()
+/*void SerialModule::Update()
 {
 	if (Serial.available())	/// TODO: remove? Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
 	{
-		received_data = GetLineSerial();
-		Serial.print("Received --> ");
+		received_data = GetData();
+
+		///TODO: borrar. Es para debug.
+		Serial.print("Serial Received --> ");
 		Serial.println(received_data);
 
 		braccio.process_data.ProcessData(received_data);
 	}
-}
+}*/
 
-void SerialModule::WriteSerial(String data)
+void SerialModule::SendData(String data)
 {
-	///TODO
+	Serial.println(data);
 }
 
-String SerialModule::GetLineSerial()
+String SerialModule::GetData()
 {
 	String tmp_data = "";
 	if (Serial.available())
@@ -42,6 +44,6 @@ String SerialModule::GetLineSerial()
 			delay(25);
 			new_char = Serial.read();
 		}
-		return (tmp_data);
 	}
+	return (tmp_data);
 }

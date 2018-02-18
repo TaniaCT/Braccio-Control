@@ -122,7 +122,7 @@ void RoboticArm::Move()
 		int current_angle = joints[i]->GetCurrentAngle();
 		if (target_angle != current_angle)
 		{
-      moving = true;
+			moving = true;
 			//One step ahead
 			if (target_angle > current_angle) {
 				current_angle++;
@@ -142,15 +142,17 @@ void RoboticArm::Move()
 	}
 
  if (moving) {
-  send_message = true;
+	send_message = true;
  }
-  //If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
- if ((braccio.bt_module.GetBluetoothState() == 1)&& !moving && send_message)
+
+ /// TOOD: take into account the other types of communication you have implemented, not only BT
+ //If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
+ if ((braccio.coms_module.GetComsState("Bluetooth") == 1)&& !moving && send_message)
  {
-  Serial.println("Sent");
-  Serial.println(braccio.robot.BuildStringCurrentAngles());
-  braccio.bt_module.WriteBluetooth(braccio.robot.BuildStringCurrentAngles());
-  send_message = false;
+	  Serial.println("Sent");
+	  Serial.println(braccio.robot.BuildStringCurrentAngles());
+	  braccio.coms_module.SendData(braccio.robot.BuildStringCurrentAngles(), "Bluetooth");
+	  send_message = false;
  }
 
 	//delay to let finish the little movement

@@ -2,13 +2,12 @@
 #define __BRACCIOCONTROL__
 
 #include "Modules.h"
-#include "Robot.h"
-#include "BluetoothModule.h"
+#include "RobotModule.h"
 #include "EventManager.h"
 #include "ProcessDataModule.h"
-#include "SerialModule.h"
+#include "ComsModule.h"
 
-#define MODULES 5
+#define MODULES 4
 
 class BraccioControl
 {
@@ -26,11 +25,10 @@ public:
 	void SetDelay(int step_delay); ///TODO (hacer que sea variable, haciendo las pruebas pertienentes)
 
 public:
-	Robot robot;
-	BluetoothModule bt_module;
+	RobotModule robot;
 	EventManager event_manager;
 	ProcessDataModule process_data;
-	SerialModule serial_mod;
+	ComsModule coms_module;
 	Module* modules[MODULES];
 };
 

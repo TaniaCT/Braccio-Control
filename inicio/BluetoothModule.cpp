@@ -1,12 +1,10 @@
 #include "BluetoothModule.h"
-#include "BraccioControl.h"
-//#include "EventManager.h"
-#include "ProcessDataModule.h"
 
 SoftwareSerial BT(4, 2); // RX TX
 
 BluetoothModule::BluetoothModule()
 {
+	SetName("Bluetooth");
 	/*jogging = new Command("JOG", 2, 2, true, E_ROBOT);
 	commands[0] = jogging;
 	disconnect = new Command("DISCONNECT", 0, 0, true, E_CONNECTIVITY);
@@ -25,14 +23,14 @@ void BluetoothModule::Start()
 {
 	//Serial.begin(9600);
 	BT.begin(9600);
-	curr_state = S_DISCONNECTED;
+	SetState(S_DISCONNECTED);
 	BT.print("AT");
 	time_stamp = millis();
 }
 
-void BluetoothModule::Update()
+/*void BluetoothModule::Update()
 {
-	switch (curr_state)
+	/*switch (curr_state)
 	{
 	case S_NULL: ///TODO: futuramente poner error si procede
 		break;
@@ -48,22 +46,22 @@ void BluetoothModule::Update()
 
 	// Clean data string, after each update
 	received_data = "";
-}
+}*/
 
-void BluetoothModule::WriteBluetooth(String data)
+void BluetoothModule::SendData(String data)
 {
-	Serial.println(data);
+	Serial.println("To BT -->" + data);
 	BT.print(data + "#");
 }
 
-int BluetoothModule::GetBluetoothState()
+/*int BluetoothModule::GetBluetoothState()
 {
 	return curr_state;
-}
+}*/
 
 void BluetoothModule::SetBluetoothStateDisconnected()
 {
-	curr_state = S_DISCONNECTED;
+	SetState(S_DISCONNECTED);
 	disconnect_checked = false;
 }
 
@@ -71,8 +69,8 @@ void BluetoothModule::AttemptToConnect()
 {
 	if (BT.available())
 	{
-		received_data = GetLineBT();
-		if (received_data == "OK" && !disconnect_checked)
+		String received_data = GetData();
+		if (received_data == "OK" && !disconnect_checked) ///TODO: para que lo compruebe solo una vez
 		{
 			disconnect_checked = true;
 			Serial.println(received_data);
@@ -83,7 +81,7 @@ void BluetoothModule::AttemptToConnect()
 		else
 		{
 			Serial.println("Connected.");
-			curr_state = S_CONNECTED;
+			SetState(S_CONNECTED);
 		}
 	}
 	else if ((millis() - time_stamp > 1000) && !disconnect_checked)
@@ -93,29 +91,30 @@ void BluetoothModule::AttemptToConnect()
 	}
 }
 
-void BluetoothModule::OnConnection()
+/*String BluetoothModule::OnConnection()
 {
 	if (BT.available())
 	{
-		received_data = GetLineBT();
+		received_data = GetData();
 		Serial.print("Received --> ");
 		Serial.println(received_data);	/// TODO: remove. 
 		//BT.print(received_data+"#");		/// Esta es la confirmacion de lo que se ha recibido
 
-		braccio.process_data.ProcessData(received_data);
+		//braccio.process_data.ProcessData(received_data);
 	}
 
-	/*if (Serial.available())	/// TODO: remove? Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
+	if (Serial.available())	/// TODO: remove? Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
 	{
 		received_data = GetLineSerial();
 		Serial.print("Received --> ");
 		Serial.println(received_data);
 
 		ProcessData();
-	}*/
-}
+	}
+	return recieved_data;
+}*/
 
-String BluetoothModule::GetLineBT()
+String BluetoothModule::GetData()
 {
 	String tmp_data = "";
 	if (BT.available())
@@ -127,8 +126,9 @@ String BluetoothModule::GetLineBT()
 			delay(25);
 			new_char = BT.read();
 		}
-		return (tmp_data);
 	}
+
+	return (tmp_data);
 }
 
 /*String BluetoothModule::GetLineSerial() ///TODO: remove

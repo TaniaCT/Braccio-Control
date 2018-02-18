@@ -1,30 +1,30 @@
-#include "Robot.h"
+#include "RobotModule.h"
 
-Robot::Robot()
+RobotModule::RobotModule()
 {
 }
 
-void Robot::Start()
+void RobotModule::Start()
 {
 	arm.Start();
 }
 
-void Robot::Update()
+void RobotModule::Update()
 {
 	arm.Move();
 }
 
-void Robot::SetDelay(int step_delay)
+void RobotModule::SetDelay(int step_delay)
 {
 	arm.SetDelay(step_delay);
 }
 
-void Robot::SetGripper(String gripper_state)
+void RobotModule::SetGripper(String gripper_state)
 {
 	if (gripper_state == "hopen" || gripper_state == "hclose") arm.SetGripper(gripper_state);
 }
 
-void Robot::Jogging(p2List<String> &list)
+void RobotModule::Jogging(p2List<String> &list)
 {
 	// From the mobile, you will send +1/0/-1, which means that joint will move towards
 	// the maximum or minimum angle or will remain where it is
@@ -39,7 +39,7 @@ void Robot::Jogging(p2List<String> &list)
 	}
 }
 
-void Robot::MoveCommand(p2List<String>& list)
+void RobotModule::MoveCommand(p2List<String>& list)
 {
 	for (int i = 1; i < list.count(); i + 2)
 	{
@@ -47,7 +47,7 @@ void Robot::MoveCommand(p2List<String>& list)
 	}
 }
 
-String Robot::BuildStringCurrentAngles()
+String RobotModule::BuildStringCurrentAngles()
 {
 	String angles = "RESPONSE ";
 	angles.concat(String(arm.GetCurrentAngles("Base")));

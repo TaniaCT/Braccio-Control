@@ -2,11 +2,10 @@
 
 BraccioControl::BraccioControl()
 {
-	modules[0] = &bt_module;
+	modules[0] = &coms_module;
 	modules[1] = &event_manager;
-	modules[2] = &robot;
-	modules[3] = &process_data;
-  modules[4]= &serial_mod;
+	modules[2] = &process_data;
+	modules[3] = &robot;
 }
 
 void BraccioControl::Start()

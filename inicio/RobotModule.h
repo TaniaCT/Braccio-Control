@@ -1,16 +1,16 @@
-#ifndef __ROBOT__
-#define __ROBOT__
+#ifndef __ROBOTMODULE__
+#define __ROBOTMODULE__
 
 #include "Modules.h"
 #include "RoboticArm.h"
 #include "List.h"
 #include "Arduino.h"
 
-class Robot : public Module
+class RobotModule : public Module
 {
 public:
 	// Constructor
-	Robot();
+	RobotModule();
 
 	// Initialitzacion of Braccio
 	void Start();

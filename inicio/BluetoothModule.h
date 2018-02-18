@@ -1,23 +1,12 @@
 #ifndef __BLUETOOTHMODULE__
 #define __BLUETOOTHMODULE__
 
-#include "Modules.h"
-#include "CommandClass.h"
-#include "List.h"
+#include "Communication.h"
 #include <SoftwareSerial.h>
 #include "Arduino.h"
 
-#define ARGUMENTS 3
-#define N_COMMANDS 5
-
-class BluetoothModule : public Module
+class BluetoothModule : public Communication
 {
-public:
-	enum State {
-		S_NULL,
-		S_CONNECTED,
-		S_DISCONNECTED,
-	};
 
 public:
 	// Constructor
@@ -27,23 +16,22 @@ public:
 	void Start();
 
 	// Update of the Bluetooht variables
-	void Update();
+	//void Update();
 
-	void WriteBluetooth(String data);
+	void SendData(String data);
 
-	int GetBluetoothState();
+	//int GetBluetoothState();
 
 	void SetBluetoothStateDisconnected();
 
-private:
 	// Manages the current state of the connection
 	void AttemptToConnect();
 
 	// Process incoming data while the module is connected to a master
-	void OnConnection();
+	//bool OnConnection();
 
 	// Enables to get a string of data instead of a single character from the module
-	String GetLineBT();
+	String GetData();
 
 	// Enables to get a string of data instead of a single character from the PC console
 	//String GetLineSerial(); ///TODO: remove
@@ -56,8 +44,7 @@ private:
 private:
 
 	unsigned long time_stamp = 0;
-	String received_data = "";
-	bool disconnect_checked = false;
+	bool disconnect_checked = false;	
 	State curr_state = S_NULL;
 	/*Command* jogging;
 	Command* disconnect;
