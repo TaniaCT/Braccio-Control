@@ -7,9 +7,9 @@ class Communication
 {
 public:
 	enum State {
-		S_NULL,
 		S_CONNECTED,
 		S_DISCONNECTED,
+		S_NULL
 	};
 
 public:
@@ -23,16 +23,16 @@ public:
 
 	virtual String GetData() { return ""; }
 
-	String GetName() { return name; }
+	//String GetName() { return name; }
 
-	void SetName(String name) { if(this->name == "") this->name = name; }
+	//void SetName(String name) { if(this->name == "") this->name = name; }
 
 	State GetState() { return curr_state; }
 
 	void SetState(State state) { curr_state = state; }
 
 private:
-	String name = "";
+	//String name = "";
 	State curr_state = S_NULL;
 };
 

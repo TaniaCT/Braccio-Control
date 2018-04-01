@@ -4,7 +4,7 @@ SoftwareSerial BT(4, 2); // RX TX
 
 BluetoothModule::BluetoothModule()
 {
-	SetName("Bluetooth");
+	//SetName("Bluetooth");
 	/*jogging = new Command("JOG", 2, 2, true, E_ROBOT);
 	commands[0] = jogging;
 	disconnect = new Command("DISCONNECT", 0, 0, true, E_CONNECTIVITY);
@@ -23,7 +23,7 @@ void BluetoothModule::Start()
 {
 	//Serial.begin(9600);
 	BT.begin(9600);
-	SetState(S_DISCONNECTED);
+	SetState(S_DISCONNECTED); ///TODO: crear evento
 	BT.print("AT");
 	time_stamp = millis();
 }
@@ -61,7 +61,7 @@ void BluetoothModule::SendData(String data)
 
 void BluetoothModule::SetBluetoothStateDisconnected()
 {
-	SetState(S_DISCONNECTED);
+	//SetState(S_DISCONNECTED); ///TODO: crear evento
 	disconnect_checked = false;
 }
 
@@ -70,7 +70,7 @@ void BluetoothModule::AttemptToConnect()
 	if (BT.available())
 	{
 		String received_data = GetData();
-		if (received_data == "OK" && !disconnect_checked) ///TODO: para que lo compruebe solo una vez
+		if (received_data == "OK" && !disconnect_checked) // Es para que se compruebe solo una vez
 		{
 			disconnect_checked = true;
 			Serial.println(received_data);
@@ -81,7 +81,7 @@ void BluetoothModule::AttemptToConnect()
 		else
 		{
 			Serial.println("Connected.");
-			SetState(S_CONNECTED);
+			SetState(S_CONNECTED); ///TODO: crear evento
 		}
 	}
 	else if ((millis() - time_stamp > 1000) && !disconnect_checked)

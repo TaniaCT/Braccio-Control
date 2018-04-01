@@ -6,10 +6,10 @@
 
 class Joint {
 public:
-	Joint(String joint_name, int min_angle, int max_angle, int current_angle);
+	Joint(int min_angle, int max_angle, int current_angle);
 
 	Servo GetServo(); 
-	String GetName();
+	//String GetName();
 	int GetMinAngle();
 	int GetMaxAngle();
 	int GetCurrentAngle();
@@ -19,7 +19,7 @@ public:
 
 private:
 	Servo servo;
-	String joint_name;
+	//String joint_name;
 	int min_angle;
 	int max_angle;
 	int current_angle;

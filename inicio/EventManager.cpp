@@ -1,4 +1,6 @@
 #include "EventManager.h"
+#include "Arduino.h"
+//#include "ComsModule.h" ///TODO: quitar
 
 EventManager::EventManager()
 {
@@ -17,8 +19,10 @@ void EventManager::AddEvent(Event & e)
 {
 	event_list.add(e);
 	///TODO: Probar!!!
-	Serial.print("Nuevo evento añadido --> Tipo: ");
-	Serial.println(event_list.end->data.GetEventType());
+	//if (serial_module.GetState() == Communication::S_CONNECTED) {
+		Serial.print("Nuevo evento añadido --> Tipo: ");
+		Serial.println(event_list.end->data.GetEventType());
+	//}
 }
 
 bool EventManager::RequestEvent(Event::EventType type, Event &e)

@@ -2,7 +2,6 @@
 #include "BraccioControl.h"
 #include "ProcessDataModule.h"
 #include "EventManager.h"
-#include "ComsModule.h"
 
 ComsModule::ComsModule()
 {
@@ -24,29 +23,30 @@ void ComsModule::Update()
 		String received_data = "";
 		switch (coms[i]->GetState())
 		{
-		case Communication::S_NULL: ///TODO: futuramente poner error si procede
-			break;
 		case Communication::S_CONNECTED:
 		{
 			received_data = coms[i]->GetData();
 			if (received_data != "") {
-				Serial.print(coms[i]->GetName());
-				Serial.print(" Received --> ");
-				Serial.println(received_data);
+				if (serial_module.GetState() == Communication::S_CONNECTED) {
+					Serial.print(i);
+					Serial.print(" Received --> ");
+					Serial.println(received_data);
+				}
 				braccio.process_data.ProcessData(received_data);
-				Serial.println("Requesting from ComsModule 1");
 			}
-			if (i == 1) {
-				Serial.println("Requesting from ComsModule 2");
-				Event ev;
+
+			/// TODO: Probar el uso de eventos, poco recomendado
+			/*if (i == 1) {
+				//Serial.println("Requesting from ComsModule 2");
+				vent ev;
 				if (braccio.event_manager.RequestEvent(Event::E_CONNECTIVITY, ev)) {
 					int number_tokens = ev.GetNumTokens();
 					Serial.print("Number of tokens: ");
 					Serial.println(number_tokens);
 					if (number_tokens != 0) {
-						Serial.println("Llego aqui");
+						Serial.println("Llego aqui"); 
 						Serial.println(ev.GetTokenElement(0));
-						if (ev.GetTokenElement(0) == "SEND")
+						if (ev.GetTokenElement(0) == 5) // 5 = "SEND"
 						{
 							String tmp_data = "";
 							for (int i = 1; i < number_tokens; i++)
@@ -58,11 +58,13 @@ void ComsModule::Update()
 						}
 					}
 				}
-			}
+			}*/
 			break;
 		}
 		case Communication::S_DISCONNECTED:
 			coms[i]->AttemptToConnect(); 
+			break;
+		case Communication::S_NULL: ///TODO: futuramente poner error si procede
 			break;
 		default:
 			break;
@@ -70,39 +72,51 @@ void ComsModule::Update()
 	}
 }
 
-void ComsModule::SendData(String data, String _communication)
+void ComsModule::SendData(String data, CommTypes _communication)
 {
-	for (int i = 0; i < NUM_COMS; i++)
+	// If the communication is connected, then the message can be sent
+	if (_communication < CT_NULL && _communication >= 0) {
+		if (coms[_communication]->GetState == Communication::S_CONNECTED) coms[_communication]->SendData(data);
+	}
+
+	/*switch (_communication)
 	{
-		if (coms[i]->GetName() == _communication)
-		{
-			coms[i]->SendData(data);
-		}
+	case ComsModule::CT_SERIAL:
+		coms[0]->SendData(data);
+		break;
+	case ComsModule::CT_BLUETOOTH:
+		coms[1]->SendData(data);
+		break;
+	case ComsModule::CT_NULL:
+		break;
+	default:
+		break;
+	}*/
+}
+
+void ComsModule::DisconnectComs(CommTypes _communication)
+{
+	if (_communication < CT_NULL && _communication >= 0) {
+		coms[_communication]->SetState(Communication::S_DISCONNECTED);
+		if (_communication == 1) bt_module.SetBluetoothStateDisconnected();
 	}
 }
 
-void ComsModule::DisconnectComs(String _communication)
+void ComsModule::ConnectComs(CommTypes _communication)
 {
-	// Serial communication can't be disconnected
-	for (int i = 1; i < NUM_COMS; i++)
-	{
-		if (coms[i]->GetName() == _communication)
-		{
-			coms[i]->SetState(Communication::S_DISCONNECTED);
-		}
+	if (_communication < CT_NULL && _communication >= 0) {
+		coms[_communication]->SetState(Communication::S_CONNECTED);
 	}
 }
 
-int ComsModule::GetComsState(String _communication)
+int ComsModule::GetComsState(CommTypes _communication)
 {
 	Communication::State state = Communication::S_NULL;
-	for (int i = 0; i < NUM_COMS; i++)
-	{
-		if (coms[i]->GetName() == _communication)
-		{
-			state = coms[i]->GetState();
-		}
+	
+	if (_communication < CT_NULL && _communication >= 0) {
+		state = coms[_communication]->GetState();
 	}
+	
 	return state;
 }
 

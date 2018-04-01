@@ -15,20 +15,21 @@ public:
 	// Constructor
 	BraccioControl();
 
-	// Initialitzacion of Braccio and communications
+	// Modules initialitzacion
 	void Start();
 
-	// Update of Braccio and communication variables
+	// Modules update
 	void Update();
 
 	// Explicit set of the delay between movements (10 - 30 ms)
 	void SetDelay(int step_delay); ///TODO (hacer que sea variable, haciendo las pruebas pertienentes)
 
 public:
-	RobotModule robot;
+	ComsModule coms_module;
 	EventManager event_manager;
 	ProcessDataModule process_data;
-	ComsModule coms_module;
+	RobotModule robot;
+	
 	Module* modules[MODULES];
 };
 

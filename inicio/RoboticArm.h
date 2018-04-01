@@ -8,6 +8,16 @@
 class RoboticArm
 {
 public:
+	enum JointTypes {
+		JT_BASE,
+		JT_SHOULDER,
+		JT_ELBOW,
+		JT_WRIST_VER,
+		JT_WRIST_ROT,
+		JT_GRIPPER,
+		JT_NULL
+	};
+public:
 	// Constructor. Needs to set a delay in ms between 10 and 30.
 	RoboticArm(int step_delay = 20);
 
@@ -27,9 +37,9 @@ public:
 	//"Elbow", "Wrist_ver", "Wrist_rot", "Gripper")
 	// If the angle is not inside the range of the joint, the limit values
 	// will be set.
-	void SetJointAngles(String servo_name, int angle);
+	void SetJointAngles(JointTypes joint_type, int angle);
 
-	int GetCurrentAngles(String servo_name);
+	int GetCurrentAngles(JointTypes joint_type);
 
 private:
 	// This function, used only with the Braccio Shield V4 and greater,
@@ -55,7 +65,7 @@ private:
 	Joint* wrist_ver;
 	Joint* wrist_rot;
 	Joint* gripper;
-	Joint* joints[6];
+	Joint* joints[JT_NULL];
 };
 
 #endif

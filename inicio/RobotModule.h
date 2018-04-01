@@ -23,9 +23,9 @@ public:
 
 	void SetGripper(String gripper_state);
 
-	void Jogging(p2List<String> &list);
+	void Jogging(p2List<int> &list);
 
-	void MoveCommand(p2List<String> &list);
+	void MoveCommand(p2List<int> &list);
 
 	String BuildStringCurrentAngles();
 

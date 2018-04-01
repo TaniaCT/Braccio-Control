@@ -42,7 +42,6 @@ public:
 	//void ProcessData();
 
 private:
-
 	unsigned long time_stamp = 0;
 	bool disconnect_checked = false;	
 	State curr_state = S_NULL;

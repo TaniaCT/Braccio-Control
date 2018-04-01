@@ -1,16 +1,9 @@
 #include "SerialModule.h"
 
-SerialModule::SerialModule()
-{
-	SetName("Serial");
-}
-
 void SerialModule::Start()
 {
 	Serial.begin(9600);
-	SetState(S_CONNECTED);
-	//while (!Serial); 
-	///TODO: probar
+	SetState(S_DISCONNECTED); ///TODO: crear evento
 }
 
 /*void SerialModule::Update()
@@ -32,6 +25,14 @@ void SerialModule::SendData(String data)
 	Serial.println(data);
 }
 
+void SerialModule::AttemptToConnect()
+{
+	if (S_DISCONNECTED && Serial) {
+		SetState(S_CONNECTED);
+		Serial.println("Serial connected");
+	}
+}
+
 String SerialModule::GetData()
 {
 	String tmp_data = "";
@@ -45,5 +46,10 @@ String SerialModule::GetData()
 			new_char = Serial.read();
 		}
 	}
+
+	if (S_CONNECTED && !Serial) {
+		SetState(S_DISCONNECTED);
+	}
+
 	return (tmp_data);
 }

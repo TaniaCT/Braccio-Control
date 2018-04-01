@@ -7,9 +7,7 @@
 class Command
 {
 public:
-	Command(String name, int min_args, int max_args, bool immediate, Event::EventType type);
-
-	String GetName() const;
+	Command(int min_args, int max_args, bool immediate, Event::EventType type);
 
 	int GetMinArgs() const;
 
@@ -20,7 +18,6 @@ public:
 	Event::EventType GetEventType() const;
 
 private:
-	String name;
 	int min_args;
 	int max_args;
 	bool immediate;

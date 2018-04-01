@@ -1,5 +1,6 @@
 #include "RoboticArm.h"
 #include "BraccioControl.h"
+#include "ComsModule.h"
 
 // The default value for the soft start
 #define SOFT_START_LEVEL 0
@@ -16,12 +17,12 @@
 RoboticArm::RoboticArm(int step_delay)
 {
 	SetDelay(step_delay);
-	base = new Joint("Base", 0, 180, 0);
-	shoulder = new Joint("Shoulder", 15, 165, 90);
-	elbow = new Joint("Elbow", 0, 180, 180);
-	wrist_ver = new Joint("Wrist_ver", 0, 180, 130);
-	wrist_rot = new Joint("Wrist_rot", 0, 180, 90);
-	gripper = new Joint("Gripper", 10, 73, 10);
+	base = new Joint(0, 180, 0);
+	shoulder = new Joint(15, 165, 90);
+	elbow = new Joint(0, 180, 180);
+	wrist_ver = new Joint(0, 180, 130);
+	wrist_rot = new Joint(0, 180, 90);
+	gripper = new Joint(10, 73, 10);
 	joints[0] = base;
 	joints[1] = shoulder;
 	joints[2] = elbow;
@@ -47,9 +48,11 @@ void RoboticArm::Start(bool soft_start)
 	gripper->GetServo().attach(3);
 
 	//Move each servo motor to initial position
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < JT_NULL; i++) {
 		joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
-		Serial.print(joints[i]->GetName());
+		//Serial.print(joints[i]->GetName());
+		Serial.print("Joint ");
+   Serial.print(i);
 		Serial.print(": ");
 		Serial.println(joints[i]->GetCurrentAngle());
 	}
@@ -70,9 +73,59 @@ void RoboticArm::SetDelay(int _step_delay)
 	step_delay = _step_delay;
 }
 
-void RoboticArm::SetJointAngles(String servo_name, int angle)
+void RoboticArm::SetJointAngles(JointTypes joint_type, int angle)
 {
-	bool found = false;
+	//int i = 0;
+	//bool found = false;
+  Serial.print("joint_type: ");
+  Serial.print(joint_type);
+  Serial.print("   angle: ");
+  Serial.println(angle);
+	if (joint_type < JT_NULL && joint_type >= 0) {
+		if (angle < joints[joint_type]->GetMinAngle()) angle = joints[joint_type]->GetMinAngle();
+		if (angle > joints[joint_type]->GetMaxAngle()) angle = joints[joint_type]->GetMaxAngle();
+		joints[joint_type]->SetTargetAngle(angle);
+		Serial.print("SET -> ");
+		//Serial.print(joints[i]->GetName());
+		Serial.print(joint_type);
+		Serial.print(": ");
+		Serial.println(joints[joint_type]->GetCurrentAngle());
+	}
+
+	/*switch (joint_type)
+	{
+	case RoboticArm::JT_BASE:
+		i = 0;
+		found = true;
+		break;
+	case RoboticArm::JT_SHOULDER:
+		i = 1;
+		found = true;
+		break;
+	case RoboticArm::JT_ELBOW:
+		i = 2;
+		found = true;
+		break;
+	case RoboticArm::JT_WRIST_VER:
+		i = 3;
+		found = true;
+		break;
+	case RoboticArm::JT_WRIST_ROT:
+		i = 4;
+		found = true;
+		break;
+	case RoboticArm::JT_GRIPPER:
+		i = 5;
+		found = true;
+		break;
+	case RoboticArm::JT_NULL:
+		break;
+	default:
+		break;
+	}*/
+	
+	
+	/*bool found = false;
 	int i;
 	for (i = 0; i < 6; i++)
 	{
@@ -81,23 +134,58 @@ void RoboticArm::SetJointAngles(String servo_name, int angle)
 			found = true;
 			break;
 		}
-	}
+	}*/
 
-	if (found)
+	/*if (found)
 	{
 		if (angle < joints[i]->GetMinAngle()) angle = joints[i]->GetMinAngle();
 		if (angle > joints[i]->GetMaxAngle()) angle = joints[i]->GetMaxAngle();
 		joints[i]->SetTargetAngle(angle);
 		Serial.print("SET -> ");
-		Serial.print(joints[i]->GetName());
+		//Serial.print(joints[i]->GetName());
+		Serial.print(joint_type);
 		Serial.print(": ");
 		Serial.println(joints[i]->GetCurrentAngle());
-	}
+	}*/
 }
 
-int RoboticArm::GetCurrentAngles(String servo_name)
+int RoboticArm::GetCurrentAngles(JointTypes joint_type)
 {
-	bool found = false;
+	int ret = -1;
+
+	if (joint_type < JT_NULL && joint_type >= 0) {
+		ret = joints[joint_type]->GetCurrentAngle();
+	}
+
+	/*switch (joint_type)
+	{
+	case RoboticArm::JT_BASE:
+		ret = joints[0]->GetCurrentAngle();
+		break;
+	case RoboticArm::JT_SHOULDER:
+		ret = joints[1]->GetCurrentAngle();
+		break;
+	case RoboticArm::JT_ELBOW:
+		ret = joints[2]->GetCurrentAngle();
+		break;
+	case RoboticArm::JT_WRIST_VER:
+		ret = joints[3]->GetCurrentAngle();
+		break;
+	case RoboticArm::JT_WRIST_ROT:
+		ret = joints[4]->GetCurrentAngle();
+		break;
+	case RoboticArm::JT_GRIPPER:
+		ret = joints[5]->GetCurrentAngle();
+		break;
+	case RoboticArm::JT_NULL:
+		break;
+	default:
+		break;
+	}*/
+
+	return ret;
+	
+	/*bool found = false;
 	int i;
 	for (i = 0; i < 6; i++)
 	{
@@ -109,14 +197,14 @@ int RoboticArm::GetCurrentAngles(String servo_name)
 	}
 
 	if (found) return (joints[i]->GetCurrentAngle());
-	else return -1;
+	else return -1;*/
 }
 
 void RoboticArm::Move()
 {
   moving = false;
 	//For each servo motor if next degree is not the same of the previuos than do the movement
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < JT_NULL; i++)
 	{
 		int target_angle = joints[i]->GetTargetAngle();
 		int current_angle = joints[i]->GetCurrentAngle();
@@ -135,25 +223,25 @@ void RoboticArm::Move()
 			joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
 
 			Serial.print("Moved--> ");
-			Serial.print(joints[i]->GetName());
+			Serial.print(i);
 			Serial.print(": ");
 			Serial.println(joints[i]->GetCurrentAngle());
 		}
 	}
 
- if (moving) {
-	send_message = true;
- }
+	 if (moving) {
+		 send_message = true;
+	 }
 
- /// TOOD: take into account the other types of communication you have implemented, not only BT
- //If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
- if ((braccio.coms_module.GetComsState("Bluetooth") == 1)&& !moving && send_message)
- {
-	  Serial.println("Sent");
-	  Serial.println(braccio.robot.BuildStringCurrentAngles());
-	  braccio.coms_module.SendData(braccio.robot.BuildStringCurrentAngles(), "Bluetooth");
-	  send_message = false;
- }
+	 /// TOOD: take into account the other types of communication you have implemented, not only BT
+	 //If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
+	if ((braccio.coms_module.GetComsState(ComsModule::CommTypes::CT_BLUETOOTH) == Communication::S_CONNECTED)&& !moving && send_message)
+	{
+		  Serial.println("Sent");
+		  Serial.println(braccio.robot.BuildStringCurrentAngles());
+		  braccio.coms_module.SendData(braccio.robot.BuildStringCurrentAngles(), ComsModule::CommTypes::CT_BLUETOOTH);
+		  send_message = false;
+	}
 
 	//delay to let finish the little movement
 	delay(step_delay);

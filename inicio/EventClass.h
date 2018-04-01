@@ -16,16 +16,16 @@ public:
 
 	Event(); /// Construye un evento a partir de uno que ya existe.
 	/// Sirve para que funcione la lista (ADD -> copia el objeto --> primero crea y llena la informacion)
-	Event(p2List<String> &tokens, EventType type);
+	Event(p2List<int> &tokens, EventType type);
 
 	EventType GetEventType();
 
 	int GetNumTokens();
 
-	String GetTokenElement(int position);
+	int GetTokenElement(int position);
 
 private:
-	p2List<String> tokens;
+	p2List<int> tokens;
 	EventType type = E_NULL;
 };
 

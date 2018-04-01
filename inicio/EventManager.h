@@ -4,7 +4,6 @@
 #include "List.h"
 #include "Modules.h"
 #include "EventClass.h"
-#include "Arduino.h"
 
 class EventManager: public Module
 {
