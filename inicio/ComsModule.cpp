@@ -11,7 +11,7 @@ ComsModule::ComsModule()
 
 void ComsModule::Start()
 {
-	for (int i = 0; i < NUM_COMS; i++) {
+	for (int i = 0; i < CT_NULL; i++) {
 		coms[i]->Start();
 	}
 }
@@ -19,7 +19,7 @@ void ComsModule::Start()
 void ComsModule::Update()
 {
 	//Serial.println("Updating coms module");
-	for (int i = 0; i < NUM_COMS; i++) {
+	for (int i = 0; i < CT_NULL; i++) {
 		String received_data = "";
 		switch (coms[i]->GetState())
 		{
@@ -76,7 +76,8 @@ void ComsModule::SendData(String data, CommTypes _communication)
 {
 	// If the communication is connected, then the message can be sent
 	if (_communication < CT_NULL && _communication >= 0) {
-		if (coms[_communication]->GetState == Communication::S_CONNECTED) coms[_communication]->SendData(data);
+		//if (coms[_communication]->GetState == Communication::S_CONNECTED) 
+		coms[_communication]->SendData(data);
 	}
 
 	/*switch (_communication)

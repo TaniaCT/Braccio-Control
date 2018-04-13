@@ -21,9 +21,9 @@ public:
 	// Explicit set of the delay between single movements
 	void SetDelay(int step_delay);
 
-	void SetGripper(String gripper_state);
+	void SetGripper(int gripper_state);
 
-	void Jogging(p2List<int> &list);
+	void JoggingCommand(p2List<int> &list);
 
 	void MoveCommand(p2List<int> &list);
 
@@ -31,6 +31,7 @@ public:
 
 private:
 	RoboticArm arm;
+	bool see_if_moving = false;
 };
 
 #endif 

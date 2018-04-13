@@ -50,9 +50,8 @@ void RoboticArm::Start(bool soft_start)
 	//Move each servo motor to initial position
 	for (int i = 0; i < JT_NULL; i++) {
 		joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
-		//Serial.print(joints[i]->GetName());
 		Serial.print("Joint ");
-   Serial.print(i);
+		Serial.print(i);
 		Serial.print(": ");
 		Serial.println(joints[i]->GetCurrentAngle());
 	}
@@ -60,11 +59,11 @@ void RoboticArm::Start(bool soft_start)
 	if (soft_start) SoftStart(SOFT_START_LEVEL);
 }
 
-void RoboticArm::SetGripper(String gripper_state)
+/*void RoboticArm::SetGripper(String gripper_state)
 {
 	if (gripper_state == "hopen") gripper->SetTargetAngle(10);
 	else if (gripper_state == "hclose") gripper->SetTargetAngle(73);
-}
+}*/
 
 void RoboticArm::SetDelay(int _step_delay)
 {
@@ -77,10 +76,10 @@ void RoboticArm::SetJointAngles(JointTypes joint_type, int angle)
 {
 	//int i = 0;
 	//bool found = false;
-  Serial.print("joint_type: ");
-  Serial.print(joint_type);
-  Serial.print("   angle: ");
-  Serial.println(angle);
+	Serial.print("joint_type: ");
+	Serial.print(joint_type);
+	Serial.print("   angle: ");
+	Serial.println(angle);
 	if (joint_type < JT_NULL && joint_type >= 0) {
 		if (angle < joints[joint_type]->GetMinAngle()) angle = joints[joint_type]->GetMinAngle();
 		if (angle > joints[joint_type]->GetMaxAngle()) angle = joints[joint_type]->GetMaxAngle();
@@ -123,8 +122,8 @@ void RoboticArm::SetJointAngles(JointTypes joint_type, int angle)
 	default:
 		break;
 	}*/
-	
-	
+
+
 	/*bool found = false;
 	int i;
 	for (i = 0; i < 6; i++)
@@ -184,7 +183,7 @@ int RoboticArm::GetCurrentAngles(JointTypes joint_type)
 	}*/
 
 	return ret;
-	
+
 	/*bool found = false;
 	int i;
 	for (i = 0; i < 6; i++)
@@ -202,7 +201,7 @@ int RoboticArm::GetCurrentAngles(JointTypes joint_type)
 
 void RoboticArm::Move()
 {
-  moving = false;
+	moving = false;
 	//For each servo motor if next degree is not the same of the previuos than do the movement
 	for (int i = 0; i < JT_NULL; i++)
 	{
@@ -229,18 +228,19 @@ void RoboticArm::Move()
 		}
 	}
 
-	 if (moving) {
-		 send_message = true;
-	 }
+	if (moving) {
+		send_message = true;
+	}
 
-	 /// TOOD: take into account the other types of communication you have implemented, not only BT
-	 //If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
-	if ((braccio.coms_module.GetComsState(ComsModule::CommTypes::CT_BLUETOOTH) == Communication::S_CONNECTED)&& !moving && send_message)
+	/// TOOD: take into account the other types of communication you have implemented, not only BT
+	//If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
+	if ((braccio.coms_module.GetComsState(ComsModule::CommTypes::CT_BLUETOOTH) == Communication::S_CONNECTED) && !moving && send_message)
 	{
-		  Serial.println("Sent");
-		  Serial.println(braccio.robot.BuildStringCurrentAngles());
-		  braccio.coms_module.SendData(braccio.robot.BuildStringCurrentAngles(), ComsModule::CommTypes::CT_BLUETOOTH);
-		  send_message = false;
+		Serial.println("Sent Free");
+		braccio.coms_module.SendData("Free", ComsModule::CommTypes::CT_BLUETOOTH);
+		//Serial.println(braccio.robot.BuildStringCurrentAngles());
+		//braccio.coms_module.SendData(braccio.robot.BuildStringCurrentAngles(), ComsModule::CommTypes::CT_BLUETOOTH);
+		send_message = false;
 	}
 
 	//delay to let finish the little movement

@@ -28,7 +28,7 @@ public:
 	void Move();
 
 	// Sets the state of the gripper: GRIPPER_OPEN, GRIPPER_CLOSE
-	void SetGripper(String gripper_state);
+	//void SetGripper(String gripper_state);
 
 	// Sets a new delay between single movements from 10 up to 30.
 	void SetDelay(int step_delay);
