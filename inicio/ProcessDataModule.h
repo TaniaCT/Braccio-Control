@@ -19,6 +19,7 @@ public:
 		C_JOGGING,
 		C_MOVE,
 		C_HAND,
+		C_SAVEPOS,
 		C_NULL
 	};
 public:
@@ -46,6 +47,7 @@ private:
 	Command* jogging;
 	Command* move;
 	Command* hand;
+	Command* save_pos;
 	//Command* program;
 };
 

@@ -1,6 +1,9 @@
 #ifndef __ROBOTMODULE__
 #define __ROBOTMODULE__
 
+#define NUMBERPOSITIONS 6
+#define ELEMENTSPOS 6
+
 #include "Modules.h"
 #include "RoboticArm.h"
 #include "List.h"
@@ -29,9 +32,11 @@ public:
 
 	String BuildStringCurrentAngles();
 
+	void SavePosition(p2List<int> &list);
+
 private:
 	RoboticArm arm;
-	bool see_if_moving = false;
+	int positions[NUMBERPOSITIONS*ELEMENTSPOS];
 };
 
 #endif 

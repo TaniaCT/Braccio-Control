@@ -2,6 +2,13 @@
 
 RobotModule::RobotModule()
 {
+	for (int i = 0; i < NUMBERPOSITIONS*ELEMENTSPOS; i++) {
+		positions[i] = -1;
+		Serial.print("Position ");
+		Serial.print(i);
+		Serial.print(": ");
+		Serial.println(positions[i]);
+	}
 }
 
 void RobotModule::Start()
@@ -46,6 +53,13 @@ void RobotModule::MoveCommand(p2List<int>& list)
 {
 	if (list[1] >= 0 && list[1] <= 5) arm.SetJointAngles((RoboticArm::JointTypes)list[1], list[2]);
 	//else if (list[1] >= 6 && list[1] <= 8) // Set de los XYZ
+
+	/*else if (list[1] == 7) {
+		for (int i = 0; i < ELEMENTSPOS; i++) {
+			if (positions[list[2] * 6 + i] <= 0) arm.SetJointAngles((RoboticArm::JointTypes)i, positions[list[2] * 6 + i]);
+		} 
+	}*/
+
 	//else //Mirar posiciones disponibles
 }
 
@@ -65,4 +79,20 @@ String RobotModule::BuildStringCurrentAngles()
 	angles.concat(String(arm.GetCurrentAngles(RoboticArm::JointTypes::JT_GRIPPER)));
 
 	return angles;
+}
+
+void RobotModule::SavePosition(p2List<int>& list)
+{
+	if (list[1] >= 0 && list[1] < 6) {
+		for (int i = 0; i < ELEMENTSPOS; i++) {
+			positions[list[1] * ELEMENTSPOS + i] = arm.GetCurrentAngles((RoboticArm::JointTypes)i);
+		}
+
+		for (int i = 0; i < NUMBERPOSITIONS*ELEMENTSPOS; i++) {
+			Serial.print("Position ");
+			Serial.print(i);
+			Serial.print(": ");
+			Serial.println(positions[i]);
+		}
+	}
 }

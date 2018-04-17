@@ -85,7 +85,6 @@ void RoboticArm::SetJointAngles(JointTypes joint_type, int angle)
 		if (angle > joints[joint_type]->GetMaxAngle()) angle = joints[joint_type]->GetMaxAngle();
 		joints[joint_type]->SetTargetAngle(angle);
 		Serial.print("SET -> ");
-		//Serial.print(joints[i]->GetName());
 		Serial.print(joint_type);
 		Serial.print(": ");
 		Serial.println(joints[joint_type]->GetCurrentAngle());
