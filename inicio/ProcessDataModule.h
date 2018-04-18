@@ -6,7 +6,7 @@
 #include "List.h"
 #include "Arduino.h"
 
-#define N_COMMANDS 7
+#define N_COMMANDS 9
 
 class ProcessDataModule : public Module
 {
@@ -20,6 +20,7 @@ public:
 		C_MOVE,
 		C_HAND,
 		C_SAVEPOS,
+    C_STOP,
 		C_NULL
 	};
 public:
@@ -48,6 +49,7 @@ private:
 	Command* move;
 	Command* hand;
 	Command* save_pos;
+  Command* program_stop;
 	//Command* program;
 };
 

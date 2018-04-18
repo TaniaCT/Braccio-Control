@@ -40,7 +40,7 @@ public:
 	void SetJointAngles(JointTypes joint_type, int angle);
 
 	int GetCurrentAngles(JointTypes joint_type);
-
+  
 private:
 	// This function, used only with the Braccio Shield V4 and greater,
 	// turn ON the Braccio softly and save Braccio from brokes.

@@ -34,6 +34,8 @@ public:
 
 	void SavePosition(p2List<int> &list);
 
+  void StopProgram();
+
 private:
 	RoboticArm arm;
 	int positions[NUMBERPOSITIONS*ELEMENTSPOS];

@@ -24,6 +24,8 @@ ProcessDataModule::ProcessDataModule()
 	commands[6] = hand;
 	save_pos = new Command(1, 1, true, Event::E_ROBOT);
 	commands[7] = save_pos;
+  program_stop = new Command(0, 0, true, Event::E_ROBOT);
+  commands[8] = program_stop;
 	/*program = new Command(1, 20, true, Event::E_CONNECTIVITY);
 	commands[6] = program;*/
 }
@@ -85,12 +87,9 @@ void ProcessDataModule::ProcessData(String received_data)
 				case Event::E_ROBOT:
 					if (command == C_JOGGING) braccio.robot.JoggingCommand(tokens);
 					else if (command == C_MOVE) braccio.robot.MoveCommand(tokens);
-					else if (command == C_HAND) {
-						braccio.robot.SetGripper(tokens[1]);
-					}
-					else if (command = C_SAVEPOS) {
-						braccio.robot.SavePosition(tokens);
-					}
+					else if (command == C_HAND) braccio.robot.SetGripper(tokens[1]);
+					else if (command == C_SAVEPOS) braccio.robot.SavePosition(tokens);
+          else if (command == C_STOP) braccio.robot.StopProgram();
 					break;
 				case Event::E_CONNECTIVITY:
 					// CONNECT
