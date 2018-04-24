@@ -19,10 +19,11 @@ RoboticArm::RoboticArm(int step_delay)
 	SetDelay(step_delay);
 	base = new Joint(0, 180, 0);
 	shoulder = new Joint(15, 165, 90);
-	elbow = new Joint(0, 180, 180);
-	wrist_ver = new Joint(0, 180, 130);
+	elbow = new Joint(0, 180, 90);
+	wrist_ver = new Joint(0, 180, 90);
 	wrist_rot = new Joint(0, 180, 90);
-	gripper = new Joint(10, 73, 10);
+  //gripper = new Joint(10, 73, 10); //If I set 73 as the maximum value, the servo will be damaged
+	gripper = new Joint(10, 65, 10);
 	joints[0] = base;
 	joints[1] = shoulder;
 	joints[2] = elbow;
@@ -40,7 +41,7 @@ void RoboticArm::Start(bool soft_start)
 	}
 
 	// Initialization pin Servo motors
-	base->GetServo().attach(8);
+	base->GetServo().attach(11);
 	shoulder->GetServo().attach(10);
 	elbow->GetServo().attach(9);
 	wrist_ver->GetServo().attach(6);
@@ -244,7 +245,7 @@ void RoboticArm::Move()
 
 	//delay to let finish the little movement
 	delay(step_delay);
-	delay(500);
+	delay(50);
 }
 
 // This function, used only with the Braccio Shield V4 and greater,
