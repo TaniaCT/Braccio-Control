@@ -1,7 +1,7 @@
 #ifndef __ROBOTMODULE__
 #define __ROBOTMODULE__
 
-#define NUMBERPOSITIONS 6
+#define NUMBERPOSITIONS 20
 #define ELEMENTSPOS 6
 
 #include "Modules.h"

@@ -30,8 +30,8 @@ void RobotModule::SetDelay(int step_delay)
 void RobotModule::SetGripper(int gripper_state)
 {
   Serial.println(gripper_state);
-	if (gripper_state == 0) arm.SetJointAngles(RoboticArm::JointTypes::JT_GRIPPER, 10);
-	else if (gripper_state == 1) arm.SetJointAngles(RoboticArm::JointTypes::JT_GRIPPER, 73);
+	if (gripper_state == 0) arm.SetJointAngles(RoboticArm::JointTypes::JT_GRIPPER, 0);
+	else if (gripper_state == 1) arm.SetJointAngles(RoboticArm::JointTypes::JT_GRIPPER, 180);
 }
 
 void RobotModule::JoggingCommand(p2List<int> &list)
@@ -85,18 +85,18 @@ String RobotModule::BuildStringCurrentAngles()
 
 void RobotModule::SavePosition(p2List<int>& list)
 {
-	if (list[1] >= 0 && list[1] < 6) {
+	if (list[1] >= 0 && list[1] < NUMBERPOSITIONS) {
 		for (int i = 0; i < ELEMENTSPOS; i++) {
 			positions[list[1] * ELEMENTSPOS + i] = arm.GetCurrentAngles((RoboticArm::JointTypes)i);
 		}
 	}
 
- for (int i = 0; i < NUMBERPOSITIONS*ELEMENTSPOS; i++) {
+ /*for (int i = 0; i < NUMBERPOSITIONS*ELEMENTSPOS; i++) {
      Serial.print("Position ");
       Serial.print(i);
       Serial.print(": ");
       Serial.println(positions[i]);
-    }
+    }*/
 }
 
 void RobotModule::StopProgram(){

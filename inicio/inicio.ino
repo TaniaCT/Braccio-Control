@@ -6,7 +6,7 @@ BraccioControl braccio;
 void setup() 
 {
   braccio.Start();
-  Serial.print("He acabado. \n");
+  Serial.println("Ready");
   /*Serial.begin(9600);
   char* a = new char[5];
   *a = 'e';

@@ -26,8 +26,6 @@ ProcessDataModule::ProcessDataModule()
 	commands[7] = save_pos;
   program_stop = new Command(0, 0, true, Event::E_ROBOT);
   commands[8] = program_stop;
-	/*program = new Command(1, 20, true, Event::E_CONNECTIVITY);
-	commands[6] = program;*/
 }
 
 void ProcessDataModule::Start()
@@ -36,7 +34,6 @@ void ProcessDataModule::Start()
 
 void ProcessDataModule::Update()
 {
-	//Serial.println("Updating process data module");
 }
 
 void ProcessDataModule::ProcessData(String received_data)
@@ -45,20 +42,20 @@ void ProcessDataModule::ProcessData(String received_data)
 	else {
 		int command = received_data.substring(0, 1).toInt();
 
-		Serial.print("command: ");
-		Serial.println(command);
+		//Serial.print("command: ");
+		//Serial.println(command);
 
 		if (command >= 0 && command < C_NULL) {
 			p2List<int> tokens;
 			if (command == 3) Tokenize(received_data.substring(0, 3), tokens, ' ');
 			else Tokenize(received_data, tokens, ' ');
 
-			Serial.print("Tokenized: ");
+			/*Serial.print("Tokenized: ");
 			Serial.println(tokens.count());
 
 			for (int i = 0; i < tokens.count(); i++) {
 				Serial.println(tokens[i]);
-			}
+			}*/
 
 			bool immediate = false;
 			bool commandfound = false;
@@ -66,8 +63,8 @@ void ProcessDataModule::ProcessData(String received_data)
 
 			if (command < N_COMMANDS) {
 				int num_args = tokens.count() - 1;
-				Serial.print("num_args: ");
-				Serial.println(num_args);
+				//Serial.print("num_args: ");
+				//Serial.println(num_args);
 				if (num_args >= commands[command]->GetMinArgs() && num_args <= commands[command]->GetMaxArgs())
 				{
 					commandfound = true;
@@ -103,7 +100,6 @@ void ProcessDataModule::ProcessData(String received_data)
 					}
 					else if (command == C_REQUEST)
 					{
-						Serial.println(braccio.robot.BuildStringCurrentAngles());
 						braccio.coms_module.SendData(braccio.robot.BuildStringCurrentAngles(), (ComsModule::CommTypes)tokens[1]);
 					}
 					else if (command == C_SENDTO) /// TODO: Tener en cuenta todos los tipos de comunicaci�n abiertos. Restriccion: solo un modo a la vez

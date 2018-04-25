@@ -3,8 +3,6 @@
 
 #define Null 0
 
-#include "Arduino.h"
-
 #define RELEASE( x )                 \
 {                                    \
     if( x != Null && x != nullptr )  \
@@ -159,7 +157,6 @@ public:
 	*/
 	void clear()
 	{
-		Serial.println("Cosas varias");
 		p2List_item<tdata>*   p_data;
 		p2List_item<tdata>*   p_next;
 		p_data = start;
@@ -170,7 +167,6 @@ public:
 			RELEASE(p_data);
 			p_data = p_next;
 		}
-		Serial.println("Cosas varias");
 		start = end = Null;
 		size = 0;
 	}

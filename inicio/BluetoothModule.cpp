@@ -36,13 +36,13 @@ void BluetoothModule::AttemptToConnect()
 		{
 			disconnect_checked = true;
 			Serial.println(received_data);
-			Serial.println("Unconnected.");
+			Serial.println("Bluetooth no connected.");
 			//BT.print("AT");
 			//time_stamp = millis();
 		}
 		else
 		{
-			Serial.println("Connected.");
+			Serial.println("Bluetooth connected.");
 			SetState(S_CONNECTED); ///TODO: crear evento
 		}
 	}
