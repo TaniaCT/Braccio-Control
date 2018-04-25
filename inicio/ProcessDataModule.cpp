@@ -22,10 +22,10 @@ ProcessDataModule::ProcessDataModule()
 	commands[5] = move;
 	hand = new Command(1, 1, false, Event::E_ROBOT);
 	commands[6] = hand;
-	save_pos = new Command(1, 1, true, Event::E_ROBOT);
+	save_pos = new Command(1, 8, true, Event::E_ROBOT);
 	commands[7] = save_pos;
-  program_stop = new Command(0, 0, true, Event::E_ROBOT);
-  commands[8] = program_stop;
+	program_stop = new Command(0, 0, true, Event::E_ROBOT);
+	commands[8] = program_stop;
 }
 
 void ProcessDataModule::Start()
@@ -105,16 +105,6 @@ void ProcessDataModule::ProcessData(String received_data)
 					else if (command == C_SENDTO) /// TODO: Tener en cuenta todos los tipos de comunicaci�n abiertos. Restriccion: solo un modo a la vez
 					{
 						braccio.coms_module.SendData(received_data.substring(4), (ComsModule::CommTypes)tokens[1]);
-
-						/*String tmp_data = "";
-						for (p2List_item<int>* item = tokens.start->next; item != nullptr; item = item->next)
-						{
-						tmp_data += item->data;
-						if (item != tokens.end) tmp_data += " ";
-						}
-						braccio.coms_module.SendData(tmp_data, tokens[1]);
-						}
-						break;*/
 					}
 				}
 			}
