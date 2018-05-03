@@ -4,12 +4,16 @@
 class Module
 {
 public:
-	Module(){}
+	// Each module has to have a Start and Update method.
 
-	/// Posibilidad de seguir errores con el uso de bool
-	virtual void Start(){}
+	// Constructor
+	Module() {}
 
-	virtual void Update(){}
+	// Module initialization
+	virtual void Start() {}
+
+	// Module update
+	virtual void Update() {}
 };
 
 

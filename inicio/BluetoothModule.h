@@ -12,13 +12,14 @@ public:
 	// Constructor
 	BluetoothModule();
 
-	// Initialitzacion of the Bluetooht module
+	// Initialitzacion of the Bluetooth module
 	void Start();
 
+	// Implementation of the communication type method SendData, that enables
+	// to send especified data through the Bluetooth module
 	void SendData(String data);
 
-	//int GetBluetoothState();
-
+	// Method that sets the Bluetooth current state to disconnected
 	void SetBluetoothStateDisconnected();
 
 	// Manages the current state of the connection
@@ -29,8 +30,10 @@ public:
 
 
 private:
+
+	// Variables declaration
 	unsigned long time_stamp = 0;
-	bool disconnect_checked = false;	
+	bool disconnect_checked = false;
 	State curr_state = S_NULL;
 
 };

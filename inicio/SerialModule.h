@@ -13,16 +13,15 @@ public:
 	// Serial initialitzation
 	void Start();
 
-	//void Update();
-
-	// Function to send a text to the Serial console
+	// Implementation of the communication type method SendData, that enables
+	// to send especified data to the Serial console
 	void SendData(String data);
 
 	// Function that runs while ComsModule Update methode is running
 	// and checks if the Serial is enabled. If so, sets the connected state
 	void AttemptToConnect();
 
-	// Enables to get a string of data instead of a single character from the PC console
+	// Enables to get a string of data instead of a single character from the Arduino console
 	String GetData();
 };
 

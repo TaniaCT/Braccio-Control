@@ -95,7 +95,7 @@ public:
 		p2List_item<tdata>*   p_data_item;
 		p_data_item = new p2List_item < tdata >(item);
 
-		if(start == Null)
+		if (start == Null)
 		{
 			start = end = p_data_item;
 		}
@@ -115,17 +115,17 @@ public:
 	*/
 	bool del(p2List_item<tdata>* item)
 	{
-		if(item == Null)
+		if (item == Null)
 		{
 			return (false);
 		}
 
 		// Now reconstruct the list
-		if(item->prev != Null)
+		if (item->prev != Null)
 		{
 			item->prev->next = item->next;
 
-			if(item->next != Null)
+			if (item->next != Null)
 			{
 				item->next->prev = item->prev;
 			}
@@ -136,7 +136,7 @@ public:
 		}
 		else
 		{
-			if(item->next)
+			if (item->next)
 			{
 				item->next->prev = Null;
 				start = item->next;
@@ -161,7 +161,7 @@ public:
 		p2List_item<tdata>*   p_next;
 		p_data = start;
 
-		while(p_data != Null)
+		while (p_data != Null)
 		{
 			p_next = p_data->next;
 			RELEASE(p_data);
@@ -181,9 +181,9 @@ public:
 		pos = 0;
 		p_item = start;
 
-		while(p_item != Null)
+		while (p_item != Null)
 		{
-			if(pos == index)
+			if (pos == index)
 			{
 				break;
 			}
@@ -205,9 +205,9 @@ public:
 		pos = 0;
 		p_item = start;
 
-		while(p_item != Null)
+		while (p_item != Null)
 		{
-			if(pos == index)
+			if (pos == index)
 			{
 				break;
 			}
@@ -226,7 +226,7 @@ public:
 	{
 		p2List_item<tdata>*   p_item = other_list.start;
 
-		while(p_item != Null)
+		while (p_item != Null)
 		{
 			add(p_item->data);
 			p_item = p_item->next;
@@ -243,9 +243,9 @@ public:
 		long                  pos = 0;
 		p2List_item<tdata>*   p_item = start;
 
-		while(p_item != Null)
+		while (p_item != Null)
 		{
-			if(pos++ == index)
+			if (pos++ == index)
 				break;
 
 			p_item = p_item->next;
@@ -262,9 +262,9 @@ public:
 		long                  pos = 0;
 		p2List_item<tdata>*   p_item = start;
 
-		while(p_item != Null)
+		while (p_item != Null)
 		{
-			if(pos++ == index)
+			if (pos++ == index)
 				break;
 
 			p_item = p_item->next;
@@ -287,15 +287,15 @@ public:
 		int ret = 0;
 		bool swapped = true;
 
-		while(swapped)
+		while (swapped)
 		{
 			swapped = false;
 			p2List_item<tdata>* tmp = start;
 
-			while(tmp != Null && tmp->next != Null)
+			while (tmp != Null && tmp->next != Null)
 			{
 				++ret;
-				if(tmp->data > tmp->next->data)
+				if (tmp->data > tmp->next->data)
 				{
 					SWAP(tmp->data, tmp->next->data);
 					swapped = true;
@@ -316,9 +316,9 @@ public:
 		p2List_item<tdata>* tmp = start;
 		int index = 0;
 
-		while(tmp != Null)
+		while (tmp != Null)
 		{
-			if(tmp->data == data)
+			if (tmp->data == data)
 				return(index);
 
 			++index;
@@ -332,20 +332,20 @@ public:
 		p2List_item<tdata>* p_my_list = At(position);
 		p2List_item<tdata>* p_other_list = list.start;
 
-		while(p_other_list != Null)
+		while (p_other_list != Null)
 		{
 			p2List_item<tdata>* p_new_item = new p2List_item<tdata>(p_other_list->data);
 
 			p_new_item->next = (p_my_list) ? p_my_list->next : Null;
 
-			if(p_new_item->next != Null)
+			if (p_new_item->next != Null)
 				p_new_item->next->prev = p_new_item;
 			else
 				end = p_new_item;
 
 			p_new_item->prev = p_my_list;
-				
-			if(p_new_item->prev != Null)
+
+			if (p_new_item->prev != Null)
 				p_new_item->prev->next = p_new_item;
 			else
 				start = p_new_item;

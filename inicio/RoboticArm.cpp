@@ -2,27 +2,30 @@
 #include "BraccioControl.h"
 #include "ComsModule.h"
 
-// The default value for the soft start
+// The default value for the soft start is 0
 #define SOFT_START_LEVEL 0
 
-//The software PWM is connected to PIN 12. You cannot use the pin 12 if you are using
-//a Braccio shield V4 or newer
+// The software PWM is connected to PIN 12. You cannot use the pin 12 if you are using
+// a Braccio shield V4 or newer
 #define SOFT_START_CONTROL_PIN	12
 
-//Low and High Limit Timeout for the Software PWM
+// Low and High Limit Timeout for the Software PWM
 #define LOW_LIMIT_TIMEOUT 2000
 #define HIGH_LIMIT_TIMEOUT 6000
 
-// Constructor (initialize Braccio object)
 RoboticArm::RoboticArm(int step_delay)
 {
+	// Initialization of available joints
 	SetDelay(step_delay);
 	base = new Joint(0, 180, 0);
 	shoulder = new Joint(15, 165, 90);
 	elbow = new Joint(0, 180, 90);
 	wrist_ver = new Joint(0, 180, 90);
 	wrist_rot = new Joint(0, 180, 90);
-  //gripper = new Joint(10, 73, 10); //If I set 73 as the maximum value, the servo will be damaged
+
+	//If 73 degrees are set as the maximum value, the servo will be damaged
+	//gripper = new Joint(10, 73, 10); 
+
 	gripper = new Joint(10, 65, 10);
 	joints[0] = base;
 	joints[1] = shoulder;
@@ -34,7 +37,7 @@ RoboticArm::RoboticArm(int step_delay)
 
 void RoboticArm::Start(bool soft_start)
 {
-	// Calling Braccio.begin(SOFT_START_DISABLED) the Softstart is disabled and you can use the pin 12
+	// Calling Braccio.Start(false) the Softstart is disabled and you can use the pin 12
 	if (soft_start) {
 		pinMode(SOFT_START_CONTROL_PIN, OUTPUT);
 		digitalWrite(SOFT_START_CONTROL_PIN, LOW);
@@ -51,23 +54,22 @@ void RoboticArm::Start(bool soft_start)
 	//Move each servo motor to initial position
 	for (int i = 0; i < JT_NULL; i++) {
 		joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
-		Serial.print("Joint ");
+
+		// Uncomment for debugging purpose
+
+		/*Serial.print("Joint ");
 		Serial.print(i);
 		Serial.print(": ");
-		Serial.println(joints[i]->GetCurrentAngle());
+		Serial.println(joints[i]->GetCurrentAngle());*/
 	}
 
 	if (soft_start) SoftStart(SOFT_START_LEVEL);
 }
 
-/*void RoboticArm::SetGripper(String gripper_state)
-{
-	if (gripper_state == "hopen") gripper->SetTargetAngle(10);
-	else if (gripper_state == "hclose") gripper->SetTargetAngle(73);
-}*/
-
 void RoboticArm::SetDelay(int _step_delay)
 {
+	// If the value is not inside the valid range, the limit values
+	// will be set.
 	if (_step_delay > 30) _step_delay = 30;
 	if (_step_delay < 10) _step_delay = 10;
 	step_delay = _step_delay;
@@ -75,134 +77,44 @@ void RoboticArm::SetDelay(int _step_delay)
 
 void RoboticArm::SetJointAngles(JointTypes joint_type, int angle)
 {
-	//int i = 0;
-	//bool found = false;
-	Serial.print("joint_type: ");
+	// Uncomment for debugging purpose
+
+	/*Serial.print("joint_type: ");
 	Serial.print(joint_type);
 	Serial.print("   angle: ");
-	Serial.println(angle);
+	Serial.println(angle);*/
+
+	// If the angle is not inside the range of the joint, the limit values
+	// will be set.
 	if (joint_type < JT_NULL && joint_type >= 0) {
 		if (angle < joints[joint_type]->GetMinAngle()) angle = joints[joint_type]->GetMinAngle();
 		if (angle > joints[joint_type]->GetMaxAngle()) angle = joints[joint_type]->GetMaxAngle();
 		joints[joint_type]->SetTargetAngle(angle);
+
+		// Uncomment for debugging purpose
 		Serial.print("SET -> ");
 		Serial.print(joint_type);
 		Serial.print(": ");
 		Serial.println(joints[joint_type]->GetCurrentAngle());
 	}
-
-	/*switch (joint_type)
-	{
-	case RoboticArm::JT_BASE:
-		i = 0;
-		found = true;
-		break;
-	case RoboticArm::JT_SHOULDER:
-		i = 1;
-		found = true;
-		break;
-	case RoboticArm::JT_ELBOW:
-		i = 2;
-		found = true;
-		break;
-	case RoboticArm::JT_WRIST_VER:
-		i = 3;
-		found = true;
-		break;
-	case RoboticArm::JT_WRIST_ROT:
-		i = 4;
-		found = true;
-		break;
-	case RoboticArm::JT_GRIPPER:
-		i = 5;
-		found = true;
-		break;
-	case RoboticArm::JT_NULL:
-		break;
-	default:
-		break;
-	}*/
-
-
-	/*bool found = false;
-	int i;
-	for (i = 0; i < 6; i++)
-	{
-		if (servo_name == joints[i]->GetName())
-		{
-			found = true;
-			break;
-		}
-	}*/
-
-	/*if (found)
-	{
-		if (angle < joints[i]->GetMinAngle()) angle = joints[i]->GetMinAngle();
-		if (angle > joints[i]->GetMaxAngle()) angle = joints[i]->GetMaxAngle();
-		joints[i]->SetTargetAngle(angle);
-		Serial.print("SET -> ");
-		//Serial.print(joints[i]->GetName());
-		Serial.print(joint_type);
-		Serial.print(": ");
-		Serial.println(joints[i]->GetCurrentAngle());
-	}*/
 }
 
 int RoboticArm::GetCurrentAngles(JointTypes joint_type)
 {
+	// The return value will be -1 if the specified joint is not correct
 	int ret = -1;
 
 	if (joint_type < JT_NULL && joint_type >= 0) {
 		ret = joints[joint_type]->GetCurrentAngle();
 	}
 
-	/*switch (joint_type)
-	{
-	case RoboticArm::JT_BASE:
-		ret = joints[0]->GetCurrentAngle();
-		break;
-	case RoboticArm::JT_SHOULDER:
-		ret = joints[1]->GetCurrentAngle();
-		break;
-	case RoboticArm::JT_ELBOW:
-		ret = joints[2]->GetCurrentAngle();
-		break;
-	case RoboticArm::JT_WRIST_VER:
-		ret = joints[3]->GetCurrentAngle();
-		break;
-	case RoboticArm::JT_WRIST_ROT:
-		ret = joints[4]->GetCurrentAngle();
-		break;
-	case RoboticArm::JT_GRIPPER:
-		ret = joints[5]->GetCurrentAngle();
-		break;
-	case RoboticArm::JT_NULL:
-		break;
-	default:
-		break;
-	}*/
-
 	return ret;
-
-	/*bool found = false;
-	int i;
-	for (i = 0; i < 6; i++)
-	{
-		if (servo_name == joints[i]->GetName())
-		{
-			found = true;
-			break;
-		}
-	}
-
-	if (found) return (joints[i]->GetCurrentAngle());
-	else return -1;*/
 }
 
 void RoboticArm::Move()
 {
 	moving = false;
-	//For each servo motor if next degree is not the same of the previuos than do the movement
+	//For each servomotor, if next degree is not the same of the previuos one, then perform the movement
 	for (int i = 0; i < JT_NULL; i++)
 	{
 		int target_angle = joints[i]->GetTargetAngle();
@@ -221,6 +133,7 @@ void RoboticArm::Move()
 			joints[i]->SetCurrentAngle(current_angle);
 			joints[i]->GetServo().write(joints[i]->GetCurrentAngle());
 
+			// Uncomment for debugging purpose
 			Serial.print("Moved--> ");
 			Serial.print(i);
 			Serial.print(": ");
@@ -232,19 +145,20 @@ void RoboticArm::Move()
 		send_message = true;
 	}
 
-	/// TOOD: take into account the other types of communication you have implemented, not only BT
-	//If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
+	// If a bluettoth connection exists, on last loop robot was moved and on current loop nothing was moved
 	if ((braccio.coms_module.GetComsState(ComsModule::CommTypes::CT_BLUETOOTH) == Communication::S_CONNECTED) && !moving && send_message)
 	{
-		Serial.println("Sent Free");
+		// Uncomment for debugging purpose
+		Serial.println("Movement finished");
+
 		braccio.coms_module.SendData("Free", ComsModule::CommTypes::CT_BLUETOOTH);
-		//Serial.println(braccio.robot.BuildStringCurrentAngles());
-		//braccio.coms_module.SendData(braccio.robot.BuildStringCurrentAngles(), ComsModule::CommTypes::CT_BLUETOOTH);
 		send_message = false;
 	}
 
-	//delay to let finish the little movement
+	// Delay to let finish the little movement
 	delay(step_delay);
+
+	// Delay to reduce de velocity of the movement
 	delay(50);
 }
 

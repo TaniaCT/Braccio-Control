@@ -3,22 +3,8 @@
 void SerialModule::Start()
 {
 	Serial.begin(9600);
-	SetState(S_DISCONNECTED); ///TODO: crear evento
+	SetState(S_DISCONNECTED);
 }
-
-/*void SerialModule::Update()
-{
-	if (Serial.available())	/// TODO: remove? Su uso es para configurar el modulo desde consola o enviar ordenes desde consola
-	{
-		received_data = GetData();
-
-		///TODO: borrar. Es para debug.
-		Serial.print("Serial Received --> ");
-		Serial.println(received_data);
-
-		braccio.process_data.ProcessData(received_data);
-	}
-}*/
 
 void SerialModule::SendData(String data)
 {
@@ -35,6 +21,9 @@ void SerialModule::AttemptToConnect()
 
 String SerialModule::GetData()
 {
+
+	// If the reception of data is detected, each character will be read and 
+	// concatenated until the end of line char(-1)
 	String tmp_data = "";
 	if (Serial.available())
 	{
@@ -47,6 +36,8 @@ String SerialModule::GetData()
 		}
 	}
 
+	// Also, the acive connection is checked in order to disable sending data through Serial
+	// if it's disconnected
 	if (S_CONNECTED && !Serial) {
 		SetState(S_DISCONNECTED);
 	}

@@ -1,20 +1,17 @@
 #include "BraccioControl.h"
-#include "RoboticArm.h"
 
+// Initialization of the braccioControl object
 BraccioControl braccio;
 
 void setup() 
 {
-  braccio.Start();
-  Serial.println("Ready");
-  /*Serial.begin(9600);
-  char* a = new char[5];
-  *a = 'e';
-  Serial.println(*a);
-  delete a;*/
+	// Initialization of Braccio object
+	braccio.Start();
+	Serial.println("End of initialization");
 }
 
 void loop() 
 {
+	// Data update of braccio object
 	braccio.Update();
 }

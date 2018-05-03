@@ -8,6 +8,8 @@
 class RoboticArm
 {
 public:
+
+	// Enumeration that contains the index of the available joint types
 	enum JointTypes {
 		JT_BASE,
 		JT_SHOULDER,
@@ -24,23 +26,19 @@ public:
 	// Initialize Braccio to default position
 	void Start(bool soft_start = true);
 
-	// Perform Braccio simple movements
+	// Perform Braccio 1 degree movements until it reached the target angles
 	void Move();
-
-	// Sets the state of the gripper: GRIPPER_OPEN, GRIPPER_CLOSE
-	//void SetGripper(String gripper_state);
 
 	// Sets a new delay between single movements from 10 up to 30.
 	void SetDelay(int step_delay);
 
-	// Sets the target angle of a determinate joint ("Base", "Shoulder", 
+	// Sets the target angle of a determinate joint type ("Base", "Shoulder", 
 	//"Elbow", "Wrist_ver", "Wrist_rot", "Gripper")
-	// If the angle is not inside the range of the joint, the limit values
-	// will be set.
 	void SetJointAngles(JointTypes joint_type, int angle);
 
+	// Method that returns the current angle of an specified joint
 	int GetCurrentAngles(JointTypes joint_type);
-  
+
 private:
 	// This function, used only with the Braccio Shield V4 and greater,
 	// turn ON the Braccio softly and save Braccio from brokes.
@@ -49,12 +47,10 @@ private:
 	void SoftStart(int soft_start_level);
 
 	// Software implementation of the PWM for the SOFT_START_CONTROL_PIN, HIGH
-	// @param high_time: the time in the logic level high
-	// @param low_time : the time in the logic level low
 	void SoftwarePWM(int high_time, int low_time);
 
 private:
-
+	// Variables initialization
 	int step_delay;
 	bool moving = false;
 	bool send_message = false;

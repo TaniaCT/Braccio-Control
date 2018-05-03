@@ -2,7 +2,7 @@
 
 Joint::Joint(int min_angle, int max_angle, int current_angle)
 {
-	//this->joint_name = joint_name;
+	// Assignment of the passed variables to the joint ones
 	this->min_angle = min_angle;
 	this->max_angle = max_angle;
 	this->current_angle = current_angle;
@@ -13,11 +13,6 @@ Servo Joint::GetServo()
 {
 	return servo;
 }
-
-/*String Joint::GetName()
-{
-	return joint_name;
-}*/
 
 int Joint::GetMinAngle()
 {

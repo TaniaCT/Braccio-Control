@@ -3,11 +3,10 @@
 
 #include "Modules.h"
 #include "RobotModule.h"
-#include "EventManager.h"
 #include "ProcessDataModule.h"
 #include "ComsModule.h"
 
-#define MODULES 4
+#define MODULES 3
 
 class BraccioControl
 {
@@ -15,21 +14,21 @@ public:
 	// Constructor
 	BraccioControl();
 
-	// Modules initialitzacion
+	// Modules initialization
 	void Start();
 
 	// Modules update
 	void Update();
 
-	// Explicit set of the delay between movements (10 - 30 ms)
-	void SetDelay(int step_delay); ///TODO (hacer que sea variable, haciendo las pruebas pertienentes)
+	// Explicit set of the minimum delay between movements of 1 degree (10 - 30 ms)
+	void SetDelay(int step_delay);
 
 public:
+	// Variabless declaration
 	ComsModule coms_module;
-	EventManager event_manager;
 	ProcessDataModule process_data;
 	RobotModule robot;
-	
+
 	Module* modules[MODULES];
 };
 
